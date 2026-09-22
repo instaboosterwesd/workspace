@@ -236,21 +236,24 @@ function AviatorGame() {
     return liveBets;
   }, [liveBets, phase, roundProgress]);
 
-  const curveEnd = useMemo(() => ({ x: 3 + flight * 81, y: 91 - flight * 73 }), [flight]);
+  // The source graph sits just above the white x-axis dots. Keep its start
+  // aligned with the blue y-axis and let the plane travel on the line.
+  const curveEnd = useMemo(() => ({ x: 4 + flight * 77, y: 95 - flight * 77 }), [flight]);
   const planeFrame = planeFrames[fanFrameIndex] ?? propellerFrame1.url;
 
   const curve = useMemo(() => {
     const { x: endX, y: endY } = curveEnd;
-    const rise = 91 - endY;
-    const span = endX - 3;
+    const graphBase = 95;
+    const rise = graphBase - endY;
+    const span = endX - 4;
     const points: string[] = [];
     const steps = 26;
     for (let i = 0; i <= steps; i += 1) {
       const t = i / steps;
-      const x = 3 + span * t;
+      const x = 4 + span * t;
       // Keep the line attached to the plane and steadily steepen it. The
       // source animation leaves the path behind instead of wobbling it.
-      const base = 91 - rise * Math.pow(t, 2.25);
+      const base = graphBase - rise * Math.pow(t, 2.25);
       points.push(`${x.toFixed(2)} ${base.toFixed(2)}`);
     }
     return `M ${points.join(" L ")}`;
@@ -314,8 +317,8 @@ function AviatorGame() {
 
             <svg className={`flight-curve ${phase === "flying" ? "" : "is-hidden"}`} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
               <defs><linearGradient id="flightFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="var(--game-red-soft)" /><stop offset="1" stopColor="var(--game-red-deep)" /></linearGradient></defs>
-              <path d={`${curve} L ${curveEnd.x} 91 Z`} fill="url(#flightFill)" />
-              <path d={curve} fill="none" stroke="var(--game-red)" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+              <path d={`${curve} L ${curveEnd.x} 95 Z`} fill="url(#flightFill)" />
+              <path d={curve} fill="none" stroke="var(--game-red)" strokeWidth="2" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
             </svg>
             {phase === "intro" ? (
               <div className="round-intro" aria-label="Official partners">
