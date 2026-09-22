@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Original Game Project"
+description = "The original GitHub game project preserved as a standard Replit web app without changing its source, assets, or interface."
+version = "1.0.0"
+id = "artifacts/main-app"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21968
+
+[services.development]
+run = "node node_modules/vite/bin/vite.js dev --host 0.0.0.0 --port $PORT"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/main-app", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/main-app/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21968"
+BASE_PATH = "/"
