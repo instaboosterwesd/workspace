@@ -1,0 +1,247 @@
+Analyze the provided reference video and the two reference images carefully, frame by frame, and recreate the graph animation behavior as accurately as possible.
+
+IMPORTANT: Do not redesign the UI. Do not change the existing visual style, layout, colors, typography, background, plane, graph, or overall appearance. The goal is to reproduce the same graph animation style and movement shown in the references, while changing only the graph's motion behavior described below.
+
+### 1. Existing visual structure
+
+The screen contains:
+
+* A dark black/charcoal background.
+* Subtle radial/ray-shaped background graphics.
+* A bright red curved graph line.
+* A translucent/dark red filled area underneath the curve.
+* A small red airplane positioned at the current endpoint of the graph.
+* A large white multiplier value such as `1.77x`, `2.02x`, etc. in the center area.
+* Small white tick/dot markers along the bottom.
+* The graph starts from the bottom-left area.
+* The curve rises smoothly toward the upper-right.
+* The airplane follows the current endpoint of the graph.
+* The red filled area must always remain underneath the currently drawn curve.
+* The vertical edge of the filled graph area must remain aligned with the current endpoint/cutoff position.
+
+### 2. Reference video behavior
+
+Study the provided video frame by frame.
+
+The original graph begins near the bottom-left and progressively rises toward the upper-right.
+
+The curve is NOT a straight line. It is a smooth accelerating upward curve, similar to the curve visible in the reference video.
+
+As the graph progresses:
+
+1. The red curve is progressively drawn from left to right.
+2. The red filled area grows underneath the curve.
+3. The airplane moves with the current endpoint of the curve.
+4. The multiplier increases continuously.
+5. The endpoint moves upward as the curve rises.
+6. The animation eventually reaches the upper/right region.
+
+Preserve this same visual behavior and curve style.
+
+### 3. Required new graph movement
+
+The main change is that the graph must NOT simply continue in one direction forever.
+
+Instead, create a repeating vertical graph movement:
+
+UP → TOUCH UPPER TARGET → DOWN → TOUCH LOWER TARGET → UP → TOUCH UPPER TARGET → DOWN → TOUCH LOWER TARGET → REPEAT
+
+The graph should continuously alternate between an upper endpoint and a lower endpoint.
+
+Use the two supplied reference images as the exact visual references for these two states:
+
+* Reference state A: approximately `1.77x`
+
+  * The curve endpoint/airplane reaches the higher position.
+  * The endpoint is visually near the upper target area.
+  * The curve rises strongly toward this upper point.
+
+* Reference state B: approximately `2.02x`
+
+  * The curve endpoint/airplane reaches the lower position.
+  * The endpoint is visibly lower than state A.
+  * The graph still remains a smooth upward-looking curve, but its current endpoint is positioned lower.
+
+Do NOT interpret "up/down" as moving the entire graph container up and down.
+
+The graph itself must animate so that its CURRENT CURVE ENDPOINT moves between the two target heights.
+
+### 4. Exact motion sequence
+
+The animation should work like this:
+
+START
+↓
+Graph begins at the bottom-left.
+↓
+Curve smoothly grows from left to right.
+↓
+Endpoint gradually rises.
+↓
+Airplane follows endpoint.
+↓
+Endpoint reaches UPPER TARGET.
+↓
+Hold/touch the upper target briefly.
+↓
+Graph transitions smoothly toward the LOWER TARGET.
+↓
+Endpoint reaches LOWER TARGET.
+↓
+Hold/touch the lower target briefly.
+↓
+Graph transitions smoothly upward again.
+↓
+Endpoint reaches UPPER TARGET.
+↓
+Repeat continuously.
+
+There must be NO sudden teleportation.
+
+There must be NO hard reset between the upper and lower states.
+
+The movement must feel like one continuous animation.
+
+### 5. Curve behavior
+
+The curve must remain smooth at all times.
+
+Do not use sharp corners or linear movement.
+
+Use smooth interpolation/easing so that:
+
+* acceleration is gradual,
+* movement slows slightly when approaching a target,
+* there is no visible jitter,
+* there is no snapping,
+* there is no sudden change in slope.
+
+The red curve should maintain the same visual character as the reference video.
+
+The curve should look like a smooth accelerating mathematical/game-style multiplier curve rather than a simple sine wave.
+
+### 6. Airplane behavior
+
+The airplane is an important part of the animation.
+
+It must:
+
+* remain attached visually to the current curve endpoint,
+* move horizontally and vertically with the endpoint,
+* maintain the same orientation/style as the reference,
+* never become detached from the curve,
+* never jump between positions.
+
+When the graph moves toward the upper target, the airplane moves upward with it.
+
+When the graph moves toward the lower target, the airplane follows the endpoint downward.
+
+When changing direction, the airplane movement must also be smooth.
+
+### 7. Red filled area
+
+The red translucent filled area below the graph must dynamically follow the graph.
+
+It must:
+
+* start from the bottom-left,
+* extend underneath the currently visible curve,
+* end exactly at the current graph endpoint,
+* have a vertical right edge aligned with that endpoint,
+* move/resize smoothly as the endpoint changes.
+
+Do not allow the filled region to remain at the old position while the curve moves.
+
+The fill and curve must always remain synchronized.
+
+### 8. Multiplier value
+
+The large multiplier text must remain synchronized with the graph animation.
+
+For example:
+
+`1.77x`
+
+and
+
+`2.02x`
+
+are reference visual states, not necessarily fixed values.
+
+The number should update smoothly according to the current animation state.
+
+Do not make the number jump randomly.
+
+Do not allow the multiplier to visually contradict the graph position.
+
+Keep the same font size, weight, position, white color, and visual treatment as the reference.
+
+### 9. Most important requirement
+
+The animation must visually communicate:
+
+UPPER TOUCH
+↓
+LOWER TOUCH
+↓
+UPPER TOUCH
+↓
+LOWER TOUCH
+↓
+UPPER TOUCH
+↓
+REPEAT
+
+The two reference images define the two important endpoint positions.
+
+The first reference represents the higher endpoint state.
+
+The second reference represents the lower endpoint state.
+
+The transition between them must be smooth and continuous.
+
+### 10. Preserve everything else
+
+Do NOT change:
+
+* background
+* background rays
+* colors
+* red graph color
+* red fill appearance
+* airplane design
+* airplane size
+* typography
+* multiplier styling
+* bottom markers
+* screen dimensions
+* overall layout
+* spacing
+* visual proportions
+* existing UI elements
+
+Only modify the graph animation logic required to create the repeated upper/lower endpoint movement.
+
+### 11. Implementation quality
+
+Before finishing, inspect the animation frame by frame and verify:
+
+* curve is smooth,
+* endpoint moves smoothly,
+* airplane follows endpoint exactly,
+* red fill follows endpoint,
+* multiplier stays synchronized,
+* upper target matches the first reference,
+* lower target matches the second reference,
+* there are no jumps,
+* there are no flickers,
+* there are no discontinuities,
+* the animation can repeat indefinitely.
+
+The final result should look like the SAME original graph system from the provided video, but with the graph endpoint repeatedly moving:
+
+UP → DOWN → UP → DOWN
+
+instead of only continuously progressing upward.
+
+Do not introduce a new visual design. Reproduce the existing visual style as closely as possible.

@@ -44,6 +44,7 @@ const maxMultiplier = 20;
 type FlightPoint = { x: number; y: number };
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+const smoothStep = (value: number) => value * value * (3 - 2 * value);
 
 function rocketYAt(progress: number) {
   const upwardProgress = 1 - Math.pow(1 - progress, 12);
@@ -55,12 +56,50 @@ function graphXAt(progress: number) {
   return 4 + horizontalProgress * 79;
 }
 
+const firstUpperProgress = Math.log(1.77) / Math.log(maxMultiplier);
+const upperTargetY = rocketYAt(firstUpperProgress);
+const lowerTargetY = upperTargetY + 17;
+const endpointCycleSpan = 0.09;
+
+function endpointYAt(progress: number) {
+  if (progress <= firstUpperProgress) return rocketYAt(progress);
+
+  const cyclePosition = ((progress - firstUpperProgress) / endpointCycleSpan) % 1;
+  const upperHoldEnd = 0.15;
+  const lowerTransitionEnd = 0.45;
+  const lowerHoldEnd = 0.6;
+
+  if (cyclePosition <= upperHoldEnd) return upperTargetY;
+  if (cyclePosition <= lowerTransitionEnd) {
+    const transition = smoothStep((cyclePosition - upperHoldEnd) / (lowerTransitionEnd - upperHoldEnd));
+    return upperTargetY + (lowerTargetY - upperTargetY) * transition;
+  }
+  if (cyclePosition <= lowerHoldEnd) return lowerTargetY;
+
+  const transition = smoothStep((cyclePosition - lowerHoldEnd) / (1 - lowerHoldEnd));
+  return lowerTargetY + (upperTargetY - lowerTargetY) * transition;
+}
+
 function flightPointAt(progress: number): FlightPoint {
   const safeProgress = clamp(progress, 0, 1);
 
   return {
     x: graphXAt(safeProgress),
-    y: clamp(rocketYAt(safeProgress), 8, 95),
+    y: clamp(endpointYAt(safeProgress), 8, 95),
+  };
+}
+
+function curvePointAt(sampleProgress: number, currentProgress: number): FlightPoint {
+  const sample = clamp(sampleProgress, 0, 1);
+  const current = clamp(currentProgress, 0, 1);
+  const currentShape = 1 - Math.pow(1 - current, 12);
+  const sampleShape = 1 - Math.pow(1 - sample, 12);
+  const targetY = endpointYAt(current);
+  const riseRatio = currentShape > 0 ? Math.min(1, sampleShape / currentShape) : 0;
+
+  return {
+    x: graphXAt(sample),
+    y: clamp(95 - riseRatio * (95 - targetY), 8, 95),
   };
 }
 
@@ -340,7 +379,8 @@ function AviatorGame() {
     return liveBets;
   }, [liveBets, phase, roundProgress]);
 
-  // Keep the plane on the endpoint of one continuous, rising reference path.
+  // Keep the plane on the endpoint while the curve smoothly transitions
+  // between the upper and lower reference targets.
   const curveEnd = useMemo(() => flightPointAt(flight), [flight]);
   const curve = useMemo(() => {
     const points: string[] = [];
@@ -348,7 +388,7 @@ function AviatorGame() {
     for (let i = 0; i <= steps; i += 1) {
       const t = i / steps;
       const progress = flight * t;
-      const { x, y } = flightPointAt(progress);
+      const { x, y } = curvePointAt(progress, flight);
       points.push(`${x.toFixed(2)} ${y.toFixed(2)}`);
     }
     return `M ${points.join(" L ")}`;
