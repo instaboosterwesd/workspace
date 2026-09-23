@@ -118,15 +118,15 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .empty-bets { padding: 44px 0; text-align: center; color: var(--muted-foreground); font-size: 13px; }
 
 .play-area { min-width: 0; min-height: 0; display: grid; grid-template-rows: 46px minmax(0, 1fr) 178px; gap: 4px; overflow: hidden; }
-.play-area.history-expanded { grid-template-rows: 178px minmax(0, 1fr) 178px; }
+.play-area.history-expanded { grid-template-rows: 98px minmax(0, 1fr) 178px; }
 .history-bar { position: relative; display: block; min-width: 0; padding: 3px 7px 2px; border-radius: 4px; background: oklch(0.08 0.005 260); overflow: hidden; transition: height .18s ease; }
 .history-list { display: flex; align-items: center; gap: 5px; min-width: 0; height: 23px; padding-right: 60px; overflow: hidden; white-space: nowrap; }
 .history-list span { flex: 0 0 auto; min-width: 42px; padding: 3px 5px; text-align: center; border-radius: 11px; background: oklch(0.055 0.008 260); font-size: 10px; font-weight: 700; }
 .history-list .purple { color: var(--game-purple); }.history-list .pink { color: var(--game-pink); }.history-list .blue { color: var(--game-blue); }
-.history-bar.open { display: block; padding: 38px 12px 12px 12px; }
-.history-bar.open .history-list { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 8px 10px; height: 128px; padding-right: 0; white-space: normal; }
-.history-bar.open .history-list span { min-width: 53px; padding-block: 4px; }
-.history-title { position: absolute; left: 12px; top: 10px; color: oklch(0.9 0.01 260); font-size: 14px; letter-spacing: .3px; }
+.history-bar.open { display: block; height: 98px; padding: 4px 8px 5px; border-radius: 0 0 9px 9px; background: oklch(0.12 0.01 260); }
+.history-bar.open .history-list { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 4px 6px; height: 66px; margin-top: 24px; padding-right: 0; overflow: hidden; white-space: normal; }
+.history-bar.open .history-list span { min-width: 40px; padding: 3px 5px; font-size: 10px; }
+.history-title { position: absolute; left: 8px; top: 7px; color: oklch(0.9 0.01 260); font-size: 11px; letter-spacing: .3px; }
 .history-meta { display: flex; align-items: center; justify-content: space-between; height: 14px; color: var(--muted-foreground); font-size: 10px; line-height: 14px; }
 .round-id { display: inline-flex; align-items: center; gap: 4px; padding: 0; background: transparent; color: var(--muted-foreground); font-size: 10px; }
 .round-id svg { width: 12px; height: 12px; padding: 2px; border-radius: 50%; background: oklch(0.19 0.01 260); }
@@ -135,7 +135,7 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .history-actions svg:first-child { width: 14px; height: 14px; }
 .history-actions svg:last-child { width: 12px; height: 12px; }
 .history-toggle.active { color: var(--foreground); }
-.history-bar.open .history-actions { top: 8px; }
+.history-bar.open .history-actions { top: 5px; right: 7px; }
 .flight-stage { position: relative; overflow: hidden; border: 1px solid var(--border); border-radius: 4px; background: oklch(0.085 0.004 20); }
 .radial-rays { position: absolute; left: 0; bottom: 0; width: max(300vw, 300vh); aspect-ratio: 1; background: url("./assets/aviator/rays.svg") center / 100% 100% no-repeat; opacity: 1; transform-origin: 50% 50%; animation: rays-spin 60s linear infinite; will-change: transform; }
 .flight-stage.phase-crashed .radial-rays { filter: sepia(1) saturate(4) hue-rotate(-25deg) brightness(.55); }
@@ -279,7 +279,7 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
   .help span { display: none; }
   .game-layout { height: auto; grid-template-columns: 1fr; padding: 3px; }
    .play-area { order: 1; grid-template-rows: 46px 48vh auto; }
-  .play-area.history-expanded { grid-template-rows: 178px 48vh auto; }
+   .play-area.history-expanded { grid-template-rows: 98px 48vh auto; }
   .bets-sidebar { order: 2; height: 430px; }
   .side-tabs { margin-inline: 36px; }
   .bet-panels { grid-template-columns: 1fr; gap: 5px; }
