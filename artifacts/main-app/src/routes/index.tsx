@@ -279,6 +279,7 @@ function BetPanel({
 }) {
   const [amount, setAmount] = useState(initial);
   const [placed, setPlaced] = useState(false);
+  const [waitingForNextRound, setWaitingForNextRound] = useState(false);
   const [cashoutResult, setCashoutResult] = useState<CashoutNotice | null>(null);
   const [mode, setMode] = useState<"Bet" | "Auto">("Bet");
   const [autoCashOut, setAutoCashOut] = useState(false);
@@ -302,19 +303,22 @@ function BetPanel({
   const [winIncreaseValue, setWinIncreaseValue] = useState(100);
   const [winDecreaseValue, setWinDecreaseValue] = useState(50);
   const change = (direction: -1 | 1) => setAmount((value) => shiftBetAmount(value, direction));
-  const isFlyingBet = phase === "flying" && placed && !cashoutResult;
-  const isLost = phase === "crashed" && placed && !cashoutResult;
+  const isFlyingBet = phase === "flying" && placed && !waitingForNextRound && !cashoutResult;
+  const isLost = phase === "crashed" && placed && !waitingForNextRound && !cashoutResult;
   const payout = cashoutResult?.amount ?? Number((amount * multiplier).toFixed(2));
-  const stakeLocked = phase !== "intro" || placed;
+  const stakeLocked = phase !== "intro" || placed || waitingForNextRound;
   const buttonClass = [
     "main-bet",
-    phase === "intro" || phase === "crashed" ? "loading" : "",
+    phase === "intro" && placed ? "loading" : "",
     isFlyingBet ? "cash-out-action" : "",
+    waitingForNextRound ? "waiting-next" : "",
     cashoutResult ? "cashed-out" : "",
     isLost ? "lost" : "",
   ].filter(Boolean).join(" ");
-  const buttonLabel = phase === "intro"
-    ? (placed ? "CANCEL" : "BET")
+  const buttonLabel = waitingForNextRound
+    ? "WAITING FOR NEXT ROUND"
+    : phase === "intro"
+      ? (placed ? "CANCEL" : "BET")
     : isFlyingBet
       ? "CASH OUT"
       : cashoutResult
@@ -329,13 +333,18 @@ function BetPanel({
       : `${money(amount)} INR`;
 
   useEffect(() => {
-    setPlaced(false);
+    setPlaced(waitingForNextRound);
+    setWaitingForNextRound(false);
     setCashoutResult(null);
   }, [round]);
 
   const handleMainBet = () => {
     if (phase === "intro") {
-      setPlaced((value) => !value);
+      if (waitingForNextRound) {
+        setWaitingForNextRound(false);
+      } else {
+        setPlaced((value) => !value);
+      }
       return;
     }
     if (isFlyingBet) {
@@ -345,6 +354,10 @@ function BetPanel({
       };
       setCashoutResult(notice);
       onCashOut(notice);
+      return;
+    }
+    if (phase === "flying") {
+      setWaitingForNextRound((value) => !value);
     }
   };
 
@@ -364,7 +377,11 @@ function BetPanel({
             {[10, 100, 500, 1000].map((value) => <button key={value} disabled={stakeLocked} onClick={() => setAmount(value)}>{value.toLocaleString()}</button>)}
           </div>
         </div>
-        <button className={buttonClass} disabled={phase !== "intro" && !isFlyingBet} onClick={handleMainBet}>
+        <button
+          className={buttonClass}
+          disabled={phase === "crashed" ? !waitingForNextRound : Boolean(cashoutResult)}
+          onClick={handleMainBet}
+        >
           <span>{buttonLabel}</span>
           <b>{buttonAmount}</b>
         </button>
