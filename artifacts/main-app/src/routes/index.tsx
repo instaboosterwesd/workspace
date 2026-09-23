@@ -420,8 +420,8 @@ function AviatorGame() {
               <>
                 <div className="axis-y-line" aria-hidden="true" />
                 <div className="axis-x-line" aria-hidden="true" />
-                <div className="y-dots scrolling">{Array.from({ length: 7 }).map((_, i) => <i key={i} />)}</div>
-                <div className="x-dots scrolling">{Array.from({ length: 9 }).map((_, i) => <i key={i} />)}</div>
+                <div className="y-dots"><div className="y-dots-track scrolling">{Array.from({ length: 7 }).map((_, i) => <i key={i} />)}</div></div>
+                <div className="x-dots"><div className="x-dots-track scrolling">{Array.from({ length: 9 }).map((_, i) => <i key={i} />)}</div></div>
               </>
             )}
 
