@@ -209,11 +209,14 @@ function shiftBetAmount(value: number, direction: -1 | 1) {
   return betAmountSteps[clamp(safeIndex + direction, 0, betAmountSteps.length - 1)] ?? 10;
 }
 
-function historyTone(value: string) {
-  const multiplierValue = Number.parseFloat(value);
+function multiplierTone(multiplierValue: number) {
   if (multiplierValue >= 10) return "pink";
   if (multiplierValue >= 2) return "purple";
   return "blue";
+}
+
+function historyTone(value: string) {
+  return multiplierTone(Number.parseFloat(value));
 }
 
 function LoadingScreen({ progress }: { progress: number }) {
@@ -627,7 +630,7 @@ function AviatorGame() {
           </div>
         )}
         {cashoutNotice && (
-          <div className="cashout-notice" role="status" aria-live="polite">
+          <div className={`cashout-notice ${multiplierTone(cashoutNotice.multiplier)}`} role="status" aria-live="polite">
             <div className="cashout-summary">
               <div className="cashout-copy">You have cashed<br />out!</div>
               <span className="cashout-multiplier">{cashoutNotice.multiplier.toFixed(2)}x</span>
@@ -652,11 +655,12 @@ function AviatorGame() {
           <div className="bets-scroll">
             {tab === "All Bets" ? visibleBets.map((bet) => {
               const cashed = bet.cashAt !== null && phase !== "intro" && multiplier >= bet.cashAt;
+              const tone = bet.cashAt === null ? "blue" : multiplierTone(bet.cashAt);
               return (
-                <div className={cashed ? "bet-row cashed" : "bet-row"} key={bet.id}>
+                <div className={cashed ? `bet-row cashed ${tone}` : "bet-row"} key={bet.id}>
                   <span className="bettor"><img src={avatars[bet.avatar]?.url ?? avatar1.url} alt="" />{bet.name}</span>
                   <strong>{money(bet.amount)}</strong>
-                  {cashed && bet.cashAt !== null && <span className={`tiny-multi ${bet.cashAt >= 2 ? "high" : "low"}`}>{bet.cashAt.toFixed(2)}x</span>}
+                  {cashed && bet.cashAt !== null && <span className={`tiny-multi ${tone}`}>{bet.cashAt.toFixed(2)}x</span>}
                   {cashed && bet.cashAt !== null && <em className="cash-out">{money(bet.amount * bet.cashAt)}</em>}
                 </div>
               );
