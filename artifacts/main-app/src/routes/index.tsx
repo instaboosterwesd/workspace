@@ -413,7 +413,7 @@ function AviatorGame() {
               <button className={historyOpen ? "history-toggle active" : "history-toggle"} aria-label={historyOpen ? "Close round history" : "Open round history"} aria-expanded={historyOpen} onClick={() => setHistoryOpen((value) => !value)}><History /><ChevronDown /></button>
             </div>
           </div>
-          <div className={`flight-stage phase-${phase}`}>
+          <div className={`flight-stage phase-${phase} border-t-[0.8px] border-r-[0.8px] border-b-[0.8px] border-l-[0.8px] rounded-tl-[15px] rounded-tr-[15px] rounded-br-[15px] rounded-bl-[15px]`}>
             <div className="radial-rays" />
             <div className="stage-glow" style={{ opacity: phase === "flying" ? Math.min(1, 0.4 + flight) : 0, filter: `hue-rotate(${flight * 85}deg)` }} />
             {phase === "flying" && (
@@ -432,7 +432,7 @@ function AviatorGame() {
                <path d={`M ${curveEnd.x} ${curveEnd.y} L ${curveEnd.x} 95`} fill="none" stroke="var(--game-red)" strokeWidth="2" strokeLinecap="butt" vectorEffect="non-scaling-stroke" />
             </svg>
             {phase === "intro" ? (
-              <div className="round-intro" aria-label="Official partners">
+              <div className="round-intro gap-[0px]" aria-label="Official partners">
                 <img className="partners-logo" src={partnersLogoAsset.url} alt="UFC and Aviator official partners" />
                 <div className="round-progress" aria-label="Next flight loading" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(roundProgress * 100)}>
                   <div className="round-progress-fill" />
