@@ -142,9 +142,9 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .flight-stage.phase-crashed .radial-rays { filter: sepia(1) saturate(4) hue-rotate(-25deg) brightness(.55); }
 
 .stage-glow { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(60% 70% at 72% 32%, oklch(0.62 0.16 235 / .42), transparent 72%); transition: opacity .3s linear, filter .3s linear; }
-.axis-y-line { position: absolute; z-index: 1; left: 24px; top: 13px; bottom: 21px; width: 1px; background: oklch(0.76 0.2 235 / .5); opacity: .72; }
+.axis-y-line { position: absolute; z-index: 1; left: 4.2%; top: 13px; bottom: 21px; width: 1px; background: oklch(0.74 0.05 250 / .28); opacity: .9; }
 .axis-x-line { position: absolute; z-index: 1; left: 8%; right: 0; bottom: 21px; height: 1px; background: oklch(0.96 0 0 / .42); opacity: .7; }
-.y-dots { position: absolute; z-index: 2; left: 22px; top: 10px; bottom: 19px; display: flex; flex-direction: column; justify-content: space-between; }
+.y-dots { position: absolute; z-index: 2; left: 2.2%; top: 10px; bottom: 19px; display: flex; flex-direction: column; justify-content: space-between; }
 .x-dots { position: absolute; z-index: 2; left: 8%; right: -14%; bottom: 9px; display: flex; justify-content: space-between; }
 .y-dots i, .x-dots i { flex: 0 0 auto; width: 4px; height: 4px; border-radius: 50%; background: var(--game-blue); }
 .x-dots i { background: var(--foreground); width: 3px; height: 3px; }
