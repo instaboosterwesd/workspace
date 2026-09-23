@@ -40,20 +40,15 @@ const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, 
 const planeFrames = [planeFrameSmall, planeFrameMedium, planeFrameBig];
 const planeFrameNames = ["small", "medium", "big"] as const;
 const maxMultiplier = 20;
-const firstPeakProgress = 0.19;
-const wavePeriod = 0.1;
-const waveTopY = 13;
-const waveBottomY = 72;
 
 function rocketYAt(progress: number) {
-  if (progress <= firstPeakProgress) {
-    const rise = progress / firstPeakProgress;
-    return 95 - (95 - waveTopY) * (1 - Math.cos(rise * Math.PI)) / 2;
-  }
+  const upwardProgress = 1 - Math.pow(1 - progress, 12);
+  return 95 - upwardProgress * 82;
+}
 
-  const waveProgress = (progress - firstPeakProgress) / wavePeriod;
-  const wave = (1 + Math.cos(waveProgress * Math.PI * 2)) / 2;
-  return waveBottomY - (waveBottomY - waveTopY) * wave;
+function graphXAt(progress: number) {
+  const horizontalProgress = 1 - Math.pow(1 - progress, 8);
+  return 4 + horizontalProgress * 79;
 }
 
 type LiveBet = { id: string; name: string; avatar: number; amount: number; cashAt: number | null };
@@ -335,18 +330,17 @@ function AviatorGame() {
   // The source graph sits just above the white x-axis dots. Keep its start
   // aligned with the blue y-axis and let the plane travel on the line.
   const curveEnd = useMemo(() => ({
-    x: 4 + flight * 79,
+    x: graphXAt(flight),
     y: rocketYAt(flight),
   }), [flight]);
   const curve = useMemo(() => {
-    const { x: endX, y: endY } = curveEnd;
-    const span = endX - 4;
     const points: string[] = [];
     const steps = 26;
     for (let i = 0; i <= steps; i += 1) {
       const t = i / steps;
-      const x = 4 + span * t;
-      const y = rocketYAt(flight * t);
+      const progress = flight * t;
+      const x = graphXAt(progress);
+      const y = rocketYAt(progress);
       points.push(`${x.toFixed(2)} ${y.toFixed(2)}`);
     }
     return `M ${points.join(" L ")}`;
