@@ -54,6 +54,8 @@ const endpointSegmentDurationMs = 3300;
 
 type FlightPoint = { x: number; y: number };
 type EndpointState = FlightPoint & { multiplier: number; tangentSlope: number };
+type FlightPhase = "intro" | "flying" | "crashed";
+type CashoutNotice = { amount: number; multiplier: number };
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 const smoothStep = (value: number) => value * value * (3 - 2 * value);
@@ -262,9 +264,22 @@ function PlaneAnimation({ animationOn, label }: { animationOn: boolean; label?: 
   );
 }
 
-function BetPanel({ initial }: { initial: number }) {
+function BetPanel({
+  initial,
+  phase,
+  multiplier,
+  round,
+  onCashOut,
+}: {
+  initial: number;
+  phase: FlightPhase;
+  multiplier: number;
+  round: number;
+  onCashOut: (notice: CashoutNotice) => void;
+}) {
   const [amount, setAmount] = useState(initial);
   const [placed, setPlaced] = useState(false);
+  const [cashoutResult, setCashoutResult] = useState<CashoutNotice | null>(null);
   const [mode, setMode] = useState<"Bet" | "Auto">("Bet");
   const [autoCashOut, setAutoCashOut] = useState(false);
   const [autoTarget, setAutoTarget] = useState(1.1);
@@ -287,6 +302,52 @@ function BetPanel({ initial }: { initial: number }) {
   const [winIncreaseValue, setWinIncreaseValue] = useState(100);
   const [winDecreaseValue, setWinDecreaseValue] = useState(50);
   const change = (direction: -1 | 1) => setAmount((value) => shiftBetAmount(value, direction));
+  const isFlyingBet = phase === "flying" && placed && !cashoutResult;
+  const isLost = phase === "crashed" && placed && !cashoutResult;
+  const payout = cashoutResult?.amount ?? Number((amount * multiplier).toFixed(2));
+  const stakeLocked = phase !== "intro" || placed;
+  const buttonClass = [
+    "main-bet",
+    phase === "intro" || phase === "crashed" ? "loading" : "",
+    isFlyingBet ? "cash-out-action" : "",
+    cashoutResult ? "cashed-out" : "",
+    isLost ? "lost" : "",
+  ].filter(Boolean).join(" ");
+  const buttonLabel = phase === "intro"
+    ? (placed ? "CANCEL" : "BET")
+    : isFlyingBet
+      ? "CASH OUT"
+      : cashoutResult
+        ? "CASHED OUT"
+        : isLost
+          ? "LOST"
+          : "BET";
+  const buttonAmount = isFlyingBet || cashoutResult
+    ? `${money(payout)} INR`
+    : isLost
+      ? "0.00 INR"
+      : `${money(amount)} INR`;
+
+  useEffect(() => {
+    setPlaced(false);
+    setCashoutResult(null);
+  }, [round]);
+
+  const handleMainBet = () => {
+    if (phase === "intro") {
+      setPlaced((value) => !value);
+      return;
+    }
+    if (isFlyingBet) {
+      const notice = {
+        amount: Number((amount * multiplier).toFixed(2)),
+        multiplier: Number(multiplier.toFixed(2)),
+      };
+      setCashoutResult(notice);
+      onCashOut(notice);
+    }
+  };
+
   return (
     <section className={mode === "Auto" ? "bet-panel auto-mode" : "bet-panel"}>
       <div className="bet-tabs">
@@ -295,17 +356,17 @@ function BetPanel({ initial }: { initial: number }) {
       <div className="bet-panel-body">
         <div className="stake-tools">
           <div className="stake-row">
-            <button aria-label="Decrease bet" onClick={() => change(-1)}><Minus /></button>
+            <button aria-label="Decrease bet" disabled={stakeLocked} onClick={() => change(-1)}><Minus /></button>
             <strong>{amount.toFixed(2)}</strong>
-            <button aria-label="Increase bet" onClick={() => change(1)}><Plus /></button>
+            <button aria-label="Increase bet" disabled={stakeLocked} onClick={() => change(1)}><Plus /></button>
           </div>
           <div className="quick-grid">
-            {[10, 100, 500, 1000].map((value) => <button key={value} onClick={() => setAmount(value)}>{value.toLocaleString()}</button>)}
+            {[10, 100, 500, 1000].map((value) => <button key={value} disabled={stakeLocked} onClick={() => setAmount(value)}>{value.toLocaleString()}</button>)}
           </div>
         </div>
-        <button className={placed ? "main-bet placed" : "main-bet"} onClick={() => setPlaced(!placed)}>
-          <span>{placed ? "CANCEL" : "BET"}</span>
-          <b>{amount.toFixed(2)} INR</b>
+        <button className={buttonClass} disabled={phase !== "intro" && !isFlyingBet} onClick={handleMainBet}>
+          <span>{buttonLabel}</span>
+          <b>{buttonAmount}</b>
         </button>
       </div>
       {mode === "Auto" && (
@@ -397,6 +458,7 @@ function AviatorGame() {
   const [musicOn, setMusicOn] = useState(false);
   const [animationOn, setAnimationOn] = useState(true);
   const [profileAvatarIndex, setProfileAvatarIndex] = useState(0);
+  const [cashoutNotice, setCashoutNotice] = useState<CashoutNotice | null>(null);
 
   useEffect(() => {
     const timer = window.setInterval(() => setProgress((value) => {
@@ -463,6 +525,7 @@ function AviatorGame() {
 
   useEffect(() => {
     if (!loaded) return;
+    setCashoutNotice(null);
     setLiveBets(makeRoundBets(round));
     setTotalBets(1100 + Math.floor(Math.random() * 700));
   }, [round, loaded]);
@@ -532,6 +595,17 @@ function AviatorGame() {
               <button className="menu-link" onClick={() => setMenuOpen(false)}><Gamepad2 /><span>Game Limits</span></button>
               <button className="menu-link" onClick={() => setMenuOpen(false)}><Languages /><span>Language</span></button>
             </div>
+          </div>
+        )}
+        {cashoutNotice && (
+          <div className="cashout-notice" role="status" aria-live="polite">
+            <div className="cashout-copy">You have cashed<br />out!</div>
+            <div className="cashout-win">
+              <strong>Win,INR</strong>
+              <b>{money(cashoutNotice.amount)}</b>
+            </div>
+            <span className="cashout-multiplier">{cashoutNotice.multiplier.toFixed(2)}x</span>
+            <button aria-label="Dismiss cash out notification" onClick={() => setCashoutNotice(null)}>×</button>
           </div>
         )}
       </header>
@@ -634,7 +708,10 @@ function AviatorGame() {
               <PlaneAnimation animationOn={animationOn} {...(phase === "flying" ? { label: "Flying airplane" } : {})} />
             </div>
           </div>
-          <div className="bet-panels"><BetPanel initial={90} /><BetPanel initial={10} /></div>
+          <div className="bet-panels">
+            <BetPanel initial={90} phase={phase} multiplier={multiplier} round={round} onCashOut={setCashoutNotice} />
+            <BetPanel initial={10} phase={phase} multiplier={multiplier} round={round} onCashOut={setCashoutNotice} />
+          </div>
         </section>
       </div>
 
