@@ -583,12 +583,14 @@ function AviatorGame() {
     return liveBets;
   }, [liveBets, phase, roundProgress]);
 
-  // Keep the plane on the live flight endpoint; the red line gets a short,
-  // straight connector into the aircraft underside without shifting the plane.
+  // Keep the plane on the live flight endpoint. In the reference frames the
+  // track arrives from below-left, then turns slightly up-right into the
+  // plane's rear underside hook. The plane itself must not be shifted to fake
+  // that join.
   const curveEnd = useMemo(() => endpointStateAt(flight, crashAt), [flight, crashAt]);
   const lineEnd = useMemo(() => ({
     x: curveEnd.x + 0.75,
-    y: curveEnd.y + 2.25,
+    y: curveEnd.y - 0.45,
   }), [curveEnd]);
   const curve = useMemo(() => {
     const { startControl, endControl } = curveControlsAt(flight, crashAt);
