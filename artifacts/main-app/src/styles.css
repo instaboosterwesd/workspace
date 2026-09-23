@@ -136,7 +136,7 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .play-area.history-expanded { grid-template-rows: 98px minmax(0, 1fr) minmax(116px, auto); }
 .history-bar { position: relative; display: block; min-width: 0; padding: 4px 7px 0; border-radius: 4px; background: oklch(0.08 0.005 260); overflow: hidden; transition: height .18s ease; }
 .history-list { display: flex; align-items: center; gap: 6px; min-width: 0; height: 23px; padding-right: 60px; overflow: hidden; white-space: nowrap; }
-.history-list span { position: relative; flex: 0 0 auto; min-width: 42px; padding: 4px 5px; text-align: center; border-radius: 10px; background: oklch(0.055 0.008 260); font-size: 10px; line-height: 1; font-weight: 700; }
+.history-list span { position: relative; flex: 0 0 auto; min-width: 42px; padding: 4px 5px; text-align: center; border: 1px solid oklch(0.18 0.015 260 / .62); border-radius: 10px; background: oklch(0.115 0.012 260); box-shadow: inset 0 1px 0 oklch(0.26 0.02 260 / .14), 0 1px 2px rgb(0 0 0 / .35); font-size: 10px; line-height: 1; font-weight: 700; }
 .history-list-animating { animation: history-list-scroll 1.15s cubic-bezier(.22, .72, .22, 1) both; will-change: transform; }
 .history-list .purple { color: var(--game-purple); }.history-list .pink { color: var(--game-pink); }.history-list .blue { color: var(--game-blue); }
 .history-bar.open { display: block; height: 98px; padding: 4px 8px 5px; border-radius: 0 0 9px 9px; background: oklch(0.12 0.01 260); }
