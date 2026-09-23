@@ -40,6 +40,8 @@ const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, 
 const planeFrames = [planeFrameSmall, planeFrameMedium, planeFrameBig];
 const planeFrameNames = ["small", "medium", "big"] as const;
 const maxMultiplier = 20;
+const curveHorizontalExponent = 14;
+const curveVerticalExponent = 16;
 
 type FlightPoint = { x: number; y: number };
 
@@ -47,16 +49,16 @@ const clamp = (value: number, min: number, max: number) => Math.min(max, Math.ma
 const smoothStep = (value: number) => value * value * (3 - 2 * value);
 
 function rocketYAt(progress: number) {
-  const upwardProgress = 1 - Math.pow(1 - progress, 12);
+  const upwardProgress = 1 - Math.pow(1 - progress, curveVerticalExponent);
   return 95 - upwardProgress * 82;
 }
 
 function graphXAt(progress: number) {
-  const horizontalProgress = 1 - Math.pow(1 - progress, 8);
+  const horizontalProgress = 1 - Math.pow(1 - progress, curveHorizontalExponent);
   return 4 + horizontalProgress * 79;
 }
 
-const firstUpperProgress = Math.log(1.77) / Math.log(maxMultiplier);
+const firstUpperProgress = Math.log(1.7) / Math.log(maxMultiplier);
 const upperTargetY = rocketYAt(firstUpperProgress);
 const lowerTargetY = upperTargetY + 17;
 const endpointCycleSpan = 0.28;
@@ -92,8 +94,8 @@ function flightPointAt(progress: number): FlightPoint {
 function curvePointAt(sampleProgress: number, currentProgress: number): FlightPoint {
   const sample = clamp(sampleProgress, 0, 1);
   const current = clamp(currentProgress, 0, 1);
-  const currentShape = 1 - Math.pow(1 - current, 12);
-  const sampleShape = 1 - Math.pow(1 - sample, 12);
+  const currentShape = 1 - Math.pow(1 - current, curveVerticalExponent);
+  const sampleShape = 1 - Math.pow(1 - sample, curveVerticalExponent);
   const targetY = endpointYAt(current);
   const riseRatio = currentShape > 0 ? Math.min(1, sampleShape / currentShape) : 0;
 

@@ -7,4 +7,4 @@ The base graph is one continuous smooth accelerating trajectory, while its live 
 
 **Why:** The B-folder reference frames show a smooth graph system, and the supplied specification requires a slow upper-touch/lower-touch repeat. Fast oscillations or a sine-like historical path make the motion visibly different from the reference.
 
-**How to apply:** Preserve the rising curve geometry when adjusting endpoint timing or fly-away behavior. Change only the live endpoint target and use slow easing between targets; do not add sharp corners, fast oscillations, or a separate lower curve.
+**How to apply:** Preserve the rising curve geometry when adjusting endpoint timing or fly-away behavior. Use the annotated yellow-dot path as the visual anchor: the initial rise should reach the upper touch at about 1.70x. Change only the live endpoint target and use slow easing between targets; do not add sharp corners, fast oscillations, or a separate lower curve.
