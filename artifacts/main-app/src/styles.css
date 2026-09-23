@@ -61,15 +61,15 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .loader-center small { display: block; width: 100%; font-size: 11px; font-weight: 700; line-height: 1.5; }
 
 .aviator-shell { min-width: 300px; height: 100dvh; background: var(--game-black); overflow: hidden; }
-.topbar { height: 40px; display: flex; align-items: center; gap: 18px; padding: 0 4px; background: var(--game-panel); position: relative; z-index: 4; }
-.brand { width: 88px; height: auto; }
-.help { display: inline-flex; align-items: center; gap: 7px; height: 27px; padding: 0 10px; border-radius: 18px; background: var(--game-gold); color: oklch(0.28 0.05 70); }
+.topbar { height: 32px; display: flex; align-items: center; gap: 14px; padding: 0 4px; background: var(--game-panel); position: relative; z-index: 4; }
+.brand { width: 84px; height: auto; }
+.help { display: inline-flex; align-items: center; gap: 6px; height: 23px; padding: 0 9px; border-radius: 18px; background: var(--game-gold); color: oklch(0.28 0.05 70); font-size: 12px; }
 .help svg { width: 17px; }
-.balance { margin-left: auto; color: var(--muted-foreground); font-size: 13px; }
-.balance strong { color: var(--game-green); font-size: 16px; }
-.menu-button { width: 39px; height: 31px; display: grid; place-items: center; border-radius: 4px; background: oklch(0.25 0.01 260); color: var(--muted-foreground); }
-.menu-button svg { width: 24px; }
-.menu-popover { position: absolute; right: 0; top: 38px; z-index: 10; width: min(320px, calc(100vw - 10px)); overflow: hidden; border: 1px solid oklch(0.23 0.01 260); border-radius: 0 0 7px 7px; background: oklch(0.13 0.01 260); box-shadow: 0 16px 30px oklch(0 0 0 / .62); }
+.balance { margin-left: auto; color: var(--muted-foreground); font-size: 12px; }
+.balance strong { color: var(--game-green); font-size: 15px; }
+.menu-button { width: 34px; height: 27px; display: grid; place-items: center; border-radius: 4px; background: oklch(0.25 0.01 260); color: var(--muted-foreground); }
+.menu-button svg { width: 21px; }
+.menu-popover { position: absolute; right: 0; top: 30px; z-index: 10; width: min(320px, calc(100vw - 10px)); overflow: hidden; border: 1px solid oklch(0.23 0.01 260); border-radius: 0 0 7px 7px; background: oklch(0.13 0.01 260); box-shadow: 0 16px 30px oklch(0 0 0 / .62); }
 .menu-profile { height: 62px; display: grid; grid-template-columns: 42px 1fr auto; align-items: center; gap: 10px; padding: 8px 11px; background: oklch(0.19 0.01 260); }
 .menu-profile img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px oklch(0.28 0.01 260); }
 .menu-profile strong { color: var(--foreground); font-size: 14px; letter-spacing: .1px; }
@@ -87,7 +87,7 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .menu-divider { height: 20px; background: oklch(0.18 0.01 260); }
 .menu-link { height: 45px; gap: 10px; padding: 0 12px; border-top: 1px solid oklch(0.22 0.01 260); font-size: 14px; }
 
-.game-layout { height: calc(100dvh - 40px); display: grid; grid-template-columns: 27% 1fr; grid-template-rows: minmax(0, 1fr); gap: 4px; padding-top: 2px; overflow: hidden; }
+.game-layout { height: calc(100dvh - 32px); display: grid; grid-template-columns: 27% 1fr; grid-template-rows: minmax(0, 1fr); gap: 4px; padding-top: 2px; overflow: hidden; }
 .bets-sidebar { min-width: 0; min-height: 0; display: flex; flex-direction: column; background: var(--game-panel); overflow: hidden; }
 .side-tabs { height: 33px; margin: 3px 64px 0; padding: 3px; display: grid; grid-template-columns: repeat(3, 1fr); background: var(--game-row); border-radius: 17px; }
 .side-tabs button { background: transparent; color: var(--muted-foreground); font-size: 12px; border-radius: 14px; }
@@ -117,20 +117,20 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .fair b { color: var(--foreground); }
 .empty-bets { padding: 44px 0; text-align: center; color: var(--muted-foreground); font-size: 13px; }
 
-.play-area { min-width: 0; min-height: 0; display: grid; grid-template-rows: 46px minmax(0, 1fr) 178px; gap: 4px; overflow: hidden; }
-.play-area.history-expanded { grid-template-rows: 98px minmax(0, 1fr) 178px; }
-.history-bar { position: relative; display: block; min-width: 0; padding: 3px 7px 2px; border-radius: 4px; background: oklch(0.08 0.005 260); overflow: hidden; transition: height .18s ease; }
-.history-list { display: flex; align-items: center; gap: 5px; min-width: 0; height: 23px; padding-right: 60px; overflow: hidden; white-space: nowrap; }
-.history-list span { flex: 0 0 auto; min-width: 42px; padding: 3px 5px; text-align: center; border-radius: 11px; background: oklch(0.055 0.008 260); font-size: 10px; font-weight: 700; }
+.play-area { min-width: 0; min-height: 0; display: grid; grid-template-rows: 36px minmax(0, 1fr) minmax(116px, auto); gap: 4px; overflow: hidden; }
+.play-area.history-expanded { grid-template-rows: 98px minmax(0, 1fr) minmax(116px, auto); }
+.history-bar { position: relative; display: block; min-width: 0; padding: 1px 7px 0; border-radius: 4px; background: oklch(0.08 0.005 260); overflow: hidden; transition: height .18s ease; }
+.history-list { display: flex; align-items: center; gap: 5px; min-width: 0; height: 19px; padding-right: 60px; overflow: hidden; white-space: nowrap; }
+.history-list span { flex: 0 0 auto; min-width: 42px; padding: 2px 5px; text-align: center; border-radius: 11px; background: oklch(0.055 0.008 260); font-size: 9px; font-weight: 700; }
 .history-list .purple { color: var(--game-purple); }.history-list .pink { color: var(--game-pink); }.history-list .blue { color: var(--game-blue); }
 .history-bar.open { display: block; height: 98px; padding: 4px 8px 5px; border-radius: 0 0 9px 9px; background: oklch(0.12 0.01 260); }
 .history-bar.open .history-list { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 4px 6px; height: 66px; margin-top: 24px; padding-right: 0; overflow: hidden; white-space: normal; }
 .history-bar.open .history-list span { min-width: 40px; padding: 3px 5px; font-size: 10px; }
 .history-title { position: absolute; left: 8px; top: 7px; color: oklch(0.9 0.01 260); font-size: 11px; letter-spacing: .3px; }
-.history-meta { display: flex; align-items: center; justify-content: space-between; height: 14px; color: var(--muted-foreground); font-size: 10px; line-height: 14px; }
+.history-meta { display: flex; align-items: center; justify-content: space-between; height: 11px; color: var(--muted-foreground); font-size: 9px; line-height: 11px; }
 .round-id { display: inline-flex; align-items: center; gap: 4px; padding: 0; background: transparent; color: var(--muted-foreground); font-size: 10px; }
 .round-id svg { width: 12px; height: 12px; padding: 2px; border-radius: 50%; background: oklch(0.19 0.01 260); }
-.history-actions { position: absolute; top: 3px; right: 7px; display: flex; align-items: center; height: 23px; padding: 0 5px 0 6px; border-radius: 13px; background: oklch(0.19 0.01 260); }
+.history-actions { position: absolute; top: 1px; right: 7px; display: flex; align-items: center; height: 20px; padding: 0 5px 0 6px; border-radius: 13px; background: oklch(0.19 0.01 260); }
 .history-actions button { width: 38px; height: 20px; display: flex; align-items: center; justify-content: space-between; padding: 0; background: transparent; color: var(--muted-foreground); }
 .history-actions svg:first-child { width: 14px; height: 14px; }
 .history-actions svg:last-child { width: 12px; height: 12px; }
@@ -238,22 +238,23 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .auto-actions .reset { width: 80px; background: oklch(0.72 0.15 75); color: oklch(0.25 0.05 70); }
 .auto-actions .start { width: 160px; background: var(--game-green); color: var(--foreground); }
 
-.bet-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.bet-panel { padding: 35px 7% 7px; background: var(--game-panel); border-radius: 12px; }
-.bet-tabs { width: 200px; height: 26px; display: grid; grid-template-columns: 1fr 1fr; margin: 0 auto 28px; padding: 2px; border-radius: 15px; background: var(--game-row); }
+.bet-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; min-height: 0; }
+.bet-panel { padding: 10px 7% 6px; background: var(--game-panel); border-radius: 8px; }
+.bet-tabs { width: 180px; height: 24px; display: grid; grid-template-columns: 1fr 1fr; margin: 0 auto 8px; padding: 2px; border-radius: 15px; background: var(--game-row); }
 .bet-tabs button { border-radius: 13px; background: transparent; color: var(--muted-foreground); font-size: 12px; }
 .bet-tabs button.active { background: oklch(0.25 0 0); color: var(--foreground); font-weight: 700; }
-.bet-panel-body { display: grid; grid-template-columns: 142px 1fr; gap: 12px; align-items: center; max-width: 410px; margin: auto; }
-.bet-panel.auto-mode { padding: 14px 7% 8px; }
-.bet-panel.auto-mode .bet-tabs { width: 190px; height: 24px; margin-bottom: 10px; }
+.bet-panel-body { display: grid; grid-template-columns: 132px 1fr; gap: 8px; align-items: center; max-width: 410px; margin: auto; }
+.bet-panel.auto-mode { padding: 10px 7% 6px; }
+.bet-panel.auto-mode .bet-tabs { width: 180px; height: 24px; margin-bottom: 8px; }
 .bet-panel.auto-mode .bet-panel-body { max-width: 390px; }
-.stake-row { display: grid; grid-template-columns: 28px 1fr 28px; align-items: center; height: 35px; border-radius: 17px; background: var(--game-row); }
-.stake-row button { width: 22px; height: 22px; margin: auto; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--muted-foreground); background: transparent; color: var(--muted-foreground); }
+.stake-row { display: grid; grid-template-columns: 25px 1fr 25px; align-items: center; height: 28px; border-radius: 17px; background: var(--game-row); }
+.stake-row button { width: 19px; height: 19px; margin: auto; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--muted-foreground); background: transparent; color: var(--muted-foreground); }
 .stake-row svg { width: 14px; }.stake-row strong { text-align: center; font-size: 19px; }
-.quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 4px; }
-.quick-grid button { height: 20px; border-radius: 11px; background: var(--game-row); color: var(--muted-foreground); font-size: 13px; }
-.main-bet { height: 82px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 19px; border: 2px solid oklch(0.82 0.17 140); background: var(--game-green); text-shadow: 0 1px 1px oklch(0 0 0 / .35); }
-.main-bet span { font-size: 20px; }.main-bet b { font-size: 27px; font-weight: 400; }.main-bet.placed { background: var(--game-red); border-color: oklch(0.76 0.2 25); }
+.stake-row strong { font-size: 17px; }
+.quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; margin-top: 3px; }
+.quick-grid button { height: 15px; border-radius: 11px; background: var(--game-row); color: var(--muted-foreground); font-size: 11px; }
+.main-bet { height: 58px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 16px; border: 2px solid oklch(0.82 0.17 140); background: var(--game-green); text-shadow: 0 1px 1px oklch(0 0 0 / .35); }
+.main-bet span { font-size: 16px; }.main-bet b { font-size: 21px; font-weight: 400; }.main-bet.placed { background: var(--game-red); border-color: oklch(0.76 0.2 25); }
 .help-backdrop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 20px; background: oklch(0 0 0 / .78); }
 .help-dialog { width: min(520px, 92vw); border: 1px solid var(--border); border-radius: 6px; background: var(--game-panel); box-shadow: 0 24px 70px oklch(0 0 0 / .72); }
 .help-dialog-head { height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; border-bottom: 1px solid var(--border); }
