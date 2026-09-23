@@ -40,6 +40,21 @@ const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, 
 const planeFrames = [planeFrameSmall, planeFrameMedium, planeFrameBig];
 const planeFrameNames = ["small", "medium", "big"] as const;
 const maxMultiplier = 20;
+const firstPeakProgress = 0.19;
+const wavePeriod = 0.1;
+const waveTopY = 13;
+const waveBottomY = 72;
+
+function rocketYAt(progress: number) {
+  if (progress <= firstPeakProgress) {
+    const rise = progress / firstPeakProgress;
+    return 95 - (95 - waveTopY) * (1 - Math.cos(rise * Math.PI)) / 2;
+  }
+
+  const waveProgress = (progress - firstPeakProgress) / wavePeriod;
+  const wave = (1 + Math.cos(waveProgress * Math.PI * 2)) / 2;
+  return waveBottomY - (waveBottomY - waveTopY) * wave;
+}
 
 type LiveBet = { id: string; name: string; avatar: number; amount: number; cashAt: number | null };
 
@@ -321,22 +336,18 @@ function AviatorGame() {
   // aligned with the blue y-axis and let the plane travel on the line.
   const curveEnd = useMemo(() => ({
     x: 4 + flight * 79,
-    y: 95 - flight * 82,
+    y: rocketYAt(flight),
   }), [flight]);
   const curve = useMemo(() => {
     const { x: endX, y: endY } = curveEnd;
-    const graphBase = 95;
-    const rise = graphBase - endY;
     const span = endX - 4;
     const points: string[] = [];
     const steps = 26;
     for (let i = 0; i <= steps; i += 1) {
       const t = i / steps;
       const x = 4 + span * t;
-      // Keep the line attached to the plane and steadily steepen it. The
-      // source animation leaves the path behind instead of wobbling it.
-      const base = graphBase - rise * Math.pow(t, 2.25);
-      points.push(`${x.toFixed(2)} ${base.toFixed(2)}`);
+      const y = rocketYAt(flight * t);
+      points.push(`${x.toFixed(2)} ${y.toFixed(2)}`);
     }
     return `M ${points.join(" L ")}`;
   }, [curveEnd, flight]);
@@ -439,7 +450,7 @@ function AviatorGame() {
               <defs><linearGradient id="flightFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="var(--game-red-soft)" /><stop offset="1" stopColor="var(--game-red-deep)" /></linearGradient></defs>
               <path d={`${curve} L ${curveEnd.x} 95 Z`} fill="url(#flightFill)" />
               <path d={curve} fill="none" stroke="var(--game-red)" strokeWidth="2" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-               <path d={`M ${curveEnd.x} ${curveEnd.y} L ${curveEnd.x} 95`} fill="none" stroke="var(--game-red)" strokeWidth="2" strokeLinecap="butt" vectorEffect="non-scaling-stroke" />
+                <path className="flight-guide-line" d={`M ${curveEnd.x} ${curveEnd.y} L ${curveEnd.x} 95`} fill="none" stroke="var(--game-red)" strokeWidth="2" strokeLinecap="butt" vectorEffect="non-scaling-stroke" />
             </svg>
             {phase === "intro" ? (
               <div className="round-intro gap-[0px]" aria-label="Official partners">
