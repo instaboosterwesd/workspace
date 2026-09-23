@@ -40,15 +40,103 @@ const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, 
 const planeFrames = [planeFrameSmall, planeFrameMedium, planeFrameBig];
 const planeFrameNames = ["small", "medium", "big"] as const;
 const maxMultiplier = 20;
+const flightDurationMs = 45000;
+const curveHorizontalExponent = 16;
+const curveRiseExponent = 1.7;
+const graphStartX = 4;
+const graphBaselineY = 95;
+const upperTarget = { x: 77, y: 17.1 };
+const lowerTarget = { x: 87.7, y: 28.6 };
+const upperTangentSlope = -0.82;
+const lowerTangentSlope = -0.61;
+const targetTransitionMs = 1350;
+const targetHoldMs = 180;
+const endpointCycleMs = targetHoldMs + targetTransitionMs + targetHoldMs + targetTransitionMs;
 
-function rocketYAt(progress: number) {
-  const upwardProgress = 1 - Math.pow(1 - progress, 12);
-  return 95 - upwardProgress * 82;
+type FlightPoint = { x: number; y: number };
+type EndpointState = FlightPoint & { multiplier: number; tangentSlope: number };
+
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+const smoothStep = (value: number) => value * value * (3 - 2 * value);
+const lerp = (from: number, to: number, amount: number) => from + (to - from) * amount;
+
+const firstUpperProgress = Math.log(1.7) / Math.log(maxMultiplier);
+function endpointStateAt(progress: number): EndpointState {
+  const safeProgress = clamp(progress, 0, 1);
+
+  if (safeProgress <= firstUpperProgress) {
+    const riseProgress = firstUpperProgress > 0 ? safeProgress / firstUpperProgress : 1;
+    const horizontalProgress = 1 - Math.pow(1 - riseProgress, curveHorizontalExponent);
+    const upwardProgress = Math.pow(horizontalProgress, curveRiseExponent);
+
+    return {
+      x: lerp(graphStartX, upperTarget.x, horizontalProgress),
+      y: lerp(graphBaselineY, upperTarget.y, upwardProgress),
+      multiplier: Math.pow(maxMultiplier, safeProgress),
+      tangentSlope: lerp(-0.18, upperTangentSlope, smoothStep(riseProgress)),
+    };
+  }
+
+  const elapsedSinceUpper = (safeProgress - firstUpperProgress) * flightDurationMs;
+  const cyclePosition = elapsedSinceUpper % endpointCycleMs;
+  const upperHoldEnd = targetHoldMs;
+  const lowerTransitionEnd = upperHoldEnd + targetTransitionMs;
+  const lowerHoldEnd = lowerTransitionEnd + targetHoldMs;
+
+  if (cyclePosition <= upperHoldEnd) {
+    return { ...upperTarget, multiplier: 1.7, tangentSlope: upperTangentSlope };
+  }
+
+  if (cyclePosition <= lowerTransitionEnd) {
+    const transition = smoothStep((cyclePosition - upperHoldEnd) / targetTransitionMs);
+    return {
+      x: lerp(upperTarget.x, lowerTarget.x, transition),
+      y: lerp(upperTarget.y, lowerTarget.y, transition),
+      multiplier: lerp(1.7, 2, transition),
+      tangentSlope: lerp(upperTangentSlope, lowerTangentSlope, transition),
+    };
+  }
+
+  if (cyclePosition <= lowerHoldEnd) {
+    return { ...lowerTarget, multiplier: 2, tangentSlope: lowerTangentSlope };
+  }
+
+  const transition = smoothStep((cyclePosition - lowerHoldEnd) / targetTransitionMs);
+  return {
+    x: lerp(lowerTarget.x, upperTarget.x, transition),
+    y: lerp(lowerTarget.y, upperTarget.y, transition),
+    multiplier: lerp(2, 1.7, transition),
+    tangentSlope: lerp(lowerTangentSlope, upperTangentSlope, transition),
+  };
 }
 
-function graphXAt(progress: number) {
-  const horizontalProgress = 1 - Math.pow(1 - progress, 8);
-  return 4 + horizontalProgress * 79;
+function curvePointAt(sampleProgress: number, currentProgress: number): FlightPoint {
+  const sample = clamp(sampleProgress, 0, 1);
+  const endpoint = endpointStateAt(currentProgress);
+  const endpointWidth = endpoint.x - graphStartX;
+  const startControl = {
+    x: graphStartX + endpointWidth * 0.2,
+    y: graphBaselineY,
+  };
+  const endControlDistance = endpointWidth * 0.16;
+  const endControl = {
+    x: endpoint.x - endControlDistance,
+    y: endpoint.y - endpoint.tangentSlope * endControlDistance,
+  };
+  const inverse = 1 - sample;
+  const inverseSquared = inverse * inverse;
+  const sampleSquared = sample * sample;
+
+  return {
+    x: inverseSquared * inverse * graphStartX
+      + 3 * inverseSquared * sample * startControl.x
+      + 3 * inverse * sampleSquared * endControl.x
+      + sampleSquared * sample * endpoint.x,
+    y: inverseSquared * inverse * graphBaselineY
+      + 3 * inverseSquared * sample * startControl.y
+      + 3 * inverse * sampleSquared * endControl.y
+      + sampleSquared * sample * endpoint.y,
+  };
 }
 
 type LiveBet = { id: string; name: string; avatar: number; amount: number; cashAt: number | null };
@@ -279,9 +367,8 @@ function AviatorGame() {
   useEffect(() => {
     if (!loaded) return;
     const started = Date.now();
-    // Keep each flight long enough to visibly reach the 10x and 20x range.
     const introDuration = 3100;
-    const flightDuration = 18000;
+    const flightDuration = flightDurationMs;
     const crashDuration = 1700;
     const roundDuration = introDuration + flightDuration + crashDuration;
     const timer = window.setInterval(() => {
@@ -295,16 +382,17 @@ function AviatorGame() {
         setRoundProgress(elapsed / introDuration);
         setMultiplier(1);
       } else if (elapsed < introDuration + flightDuration) {
-          const flightProgress = Math.min((elapsed - introDuration) / flightDuration, 1);
+        const flightProgress = Math.min((elapsed - introDuration) / flightDuration, 1);
+        const endpoint = endpointStateAt(flightProgress);
         setPhase("flying");
-          setFlight(flightProgress);
+        setFlight(flightProgress);
         setRoundProgress(1);
-          setMultiplier(Number(Math.pow(maxMultiplier, flightProgress).toFixed(2)));
+        setMultiplier(Number(endpoint.multiplier.toFixed(2)));
       } else {
         setPhase("crashed");
         setFlight(1);
         setRoundProgress(1);
-          setMultiplier(maxMultiplier);
+        setMultiplier(2);
       }
     }, 50);
     return () => window.clearInterval(timer);
@@ -327,24 +415,18 @@ function AviatorGame() {
     return liveBets;
   }, [liveBets, phase, roundProgress]);
 
-  // The source graph sits just above the white x-axis dots. Keep its start
-  // aligned with the blue y-axis and let the plane travel on the line.
-  const curveEnd = useMemo(() => ({
-    x: graphXAt(flight),
-    y: rocketYAt(flight),
-  }), [flight]);
+  // Keep the plane on the same endpoint that drives the curve, fill, and multiplier.
+  const curveEnd = useMemo(() => endpointStateAt(flight), [flight]);
   const curve = useMemo(() => {
     const points: string[] = [];
-    const steps = 26;
+    const steps = 60;
     for (let i = 0; i <= steps; i += 1) {
       const t = i / steps;
-      const progress = flight * t;
-      const x = graphXAt(progress);
-      const y = rocketYAt(progress);
+      const { x, y } = curvePointAt(t, flight);
       points.push(`${x.toFixed(2)} ${y.toFixed(2)}`);
     }
     return `M ${points.join(" L ")}`;
-  }, [curveEnd, flight]);
+  }, [flight]);
 
   if (!loaded) return <LoadingScreen progress={progress} />;
 
