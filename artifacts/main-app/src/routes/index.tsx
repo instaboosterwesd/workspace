@@ -43,7 +43,7 @@ const maxMultiplier = 40;
 const flightDurationMs = 45000;
 const curveProgressExponent = 1.18;
 const curveRiseExponent = 1.7;
-const graphStartX = 4;
+const graphStartX = 2.6;
 const graphBaselineY = 95;
 const upperTarget = { x: 77, y: 17.1 };
 const lowerTarget = { x: 87.7, y: 28.6 };
@@ -140,8 +140,7 @@ function endpointStateAt(progress: number, crashAt: number): EndpointState {
   };
 }
 
-function curvePointAt(sampleProgress: number, currentProgress: number, crashAt: number): FlightPoint {
-  const sample = clamp(sampleProgress, 0, 1);
+function curveControlsAt(currentProgress: number, crashAt: number) {
   const endpoint = endpointStateAt(currentProgress, crashAt);
   const endpointWidth = endpoint.x - graphStartX;
   const startControl = {
@@ -153,6 +152,13 @@ function curvePointAt(sampleProgress: number, currentProgress: number, crashAt: 
     x: endpoint.x - endControlDistance,
     y: endpoint.y - endpoint.tangentSlope * endControlDistance,
   };
+
+  return { endpoint, startControl, endControl };
+}
+
+function curvePointAt(sampleProgress: number, currentProgress: number, crashAt: number): FlightPoint {
+  const sample = clamp(sampleProgress, 0, 1);
+  const { endpoint, startControl, endControl } = curveControlsAt(currentProgress, crashAt);
   const inverse = 1 - sample;
   const inverseSquared = inverse * inverse;
   const sampleSquared = sample * sample;
@@ -481,14 +487,13 @@ function AviatorGame() {
   // Keep the plane on the same endpoint that drives the curve, fill, and multiplier.
   const curveEnd = useMemo(() => endpointStateAt(flight, crashAt), [flight, crashAt]);
   const curve = useMemo(() => {
-    const points: string[] = [];
-    const steps = 60;
-    for (let i = 0; i <= steps; i += 1) {
-      const t = i / steps;
-      const { x, y } = curvePointAt(t, flight, crashAt);
-      points.push(`${x.toFixed(2)} ${y.toFixed(2)}`);
-    }
-    return `M ${points.join(" L ")}`;
+    const { startControl, endControl } = curveControlsAt(flight, crashAt);
+    return [
+      `M ${graphStartX.toFixed(2)} ${graphBaselineY.toFixed(2)}`,
+      `C ${startControl.x.toFixed(2)} ${startControl.y.toFixed(2)}`,
+      `${endControl.x.toFixed(2)} ${endControl.y.toFixed(2)}`,
+      `${curveEnd.x.toFixed(2)} ${curveEnd.y.toFixed(2)}`,
+    ].join(" ");
   }, [flight, crashAt]);
 
   if (!loaded) return <LoadingScreen progress={progress} />;
@@ -585,10 +590,10 @@ function AviatorGame() {
               </>
             )}
 
-            <svg className={`flight-curve ${phase === "flying" ? "" : "is-hidden"}`} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <svg className={`flight-curve ${phase === "flying" ? "" : "is-hidden"}`} viewBox="0 0 100 100" preserveAspectRatio="none" shapeRendering="geometricPrecision" aria-hidden="true">
               <defs><linearGradient id="flightFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="var(--game-red-soft)" /><stop offset="1" stopColor="var(--game-red-deep)" /></linearGradient></defs>
-              <path d={`${curve} L ${curveEnd.x} 95 Z`} fill="url(#flightFill)" />
-              <path d={curve} fill="none" stroke="var(--game-red)" strokeWidth="2" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+              <path d={`${curve} L ${curveEnd.x.toFixed(2)} ${graphBaselineY.toFixed(2)} Z`} fill="url(#flightFill)" />
+              <path d={curve} fill="none" stroke="var(--game-red)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
             </svg>
             {phase === "intro" ? (
               <div className="round-intro gap-[0px]" aria-label="Official partners">

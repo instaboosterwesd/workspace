@@ -1,0 +1,359 @@
+# IMPORTANT — MATCH THE REFERENCE BOX SPACING AND LINE QUALITY
+
+I have provided two screenshots:
+
+* **Image 1 = the reference design I want**
+* **Image 2 = my current website implementation**
+
+Use Image 1 as the visual source of truth.
+
+Do NOT redesign the page.
+
+Do NOT change the overall UI.
+
+Only fix the differences described below.
+
+---
+
+## 1. FIX THE GAP BETWEEN THE BOX LINES
+
+The biggest problem in my current implementation is the excessive spacing inside/around the graph box.
+
+Look carefully at the reference image.
+
+There is a specific, compact distance between:
+
+* the blue vertical side markers/line,
+* the upper/white border line,
+* the graph area,
+* and the outer rounded container.
+
+My current website has made this gap much larger than the reference.
+
+REDUCE THE GAP.
+
+The spacing must visually match the reference image.
+
+Do not simply reduce the entire container size.
+
+Instead, correctly position the internal graph/plot area relative to the surrounding border.
+
+The reference should feel compact and properly aligned.
+
+---
+
+## 2. BLUE SIDE LINE / MARKERS
+
+The blue line/markers along the left side must stay close to the graph box boundary exactly like the reference.
+
+Current implementation:
+
+* blue markers are positioned too far/inconsistently relative to the graph area,
+* spacing feels too large,
+* alignment does not match the reference.
+
+Fix this.
+
+The blue vertical marker system should:
+
+* follow the same vertical region as the reference,
+* maintain consistent spacing,
+* remain aligned with the graph container,
+* have the same visual size,
+* have the same distance from the outer border.
+
+Do not move it independently.
+
+---
+
+## 3. TOP WHITE LINE / BORDER
+
+The white/light upper border line in the reference is positioned much closer to the main graph area.
+
+My current implementation creates a visibly larger empty gap.
+
+Reduce this empty space.
+
+The relationship should visually look like:
+
+```text
+OUTER BORDER
+──────────────
+
+small / controlled gap
+
+GRAPH / PLOT AREA
+─────────────────
+```
+
+NOT:
+
+```text
+OUTER BORDER
+──────────────
+
+
+        LARGE EMPTY SPACE
+
+
+GRAPH / PLOT AREA
+─────────────────
+```
+
+The current implementation looks too separated.
+
+Make the internal spacing match the reference.
+
+---
+
+## 4. GRAPH BOX HEIGHT
+
+Do not arbitrarily increase the height of the graph container.
+
+The reference has a specific visual proportion between:
+
+* top border,
+* graph area,
+* bottom baseline,
+* left border,
+* right edge.
+
+Preserve that proportion.
+
+The graph should sit naturally inside the same visual box as the reference.
+
+The empty space above the graph must NOT become unnecessarily large.
+
+---
+
+## 5. GRAPH LINE QUALITY
+
+The red graph line in my current implementation looks poor compared with the reference.
+
+Fix the rendering quality.
+
+The red line should be:
+
+* clean,
+* sharp,
+* smooth,
+* continuous,
+* consistent thickness,
+* anti-aliased,
+* visually crisp.
+
+There must be NO:
+
+* jagged edges,
+* pixelated edges,
+* broken segments,
+* inconsistent thickness,
+* blurry rendering,
+* unnecessary glow,
+* accidental dotted appearance.
+
+The reference graph line is a clean continuous red stroke.
+
+Match that appearance.
+
+---
+
+## 6. DO NOT MAKE THE GRAPH LINE TOO THIN
+
+The graph line must remain clearly visible at normal viewing size.
+
+Use a consistent stroke width.
+
+Do not allow it to become a tiny 1px-looking line if the reference visually uses a stronger stroke.
+
+The stroke should remain crisp while preserving the reference's thin/clean appearance.
+
+If the implementation uses Canvas/SVG, use proper anti-aliasing and high-DPI/devicePixelRatio handling so the line remains sharp on desktop screens.
+
+---
+
+## 7. CURVE MUST REMAIN SMOOTH
+
+Do not sacrifice the curve quality while fixing the box.
+
+The red curve must remain:
+
+* mathematically smooth,
+* continuous,
+* properly anti-aliased,
+* free of visible control-point artifacts.
+
+Do NOT render the curve as a collection of small straight line segments.
+
+Use a smooth Bézier/spline/path.
+
+---
+
+## 8. RED FILLED AREA
+
+The translucent red fill underneath the graph must remain perfectly connected to the graph.
+
+The fill should:
+
+* start at the baseline,
+* follow the exact graph curve,
+* end at the graph endpoint,
+* remain inside the graph box,
+* have the same right boundary as the curve endpoint.
+
+Do not let the fill extend outside the intended plot area.
+
+Do not introduce extra spacing between the curve and its fill.
+
+---
+
+## 9. REFERENCE COMPARISON
+
+When comparing Image 1 and Image 2, focus specifically on:
+
+### A. Vertical spacing
+
+Reference:
+
+* compact
+* controlled
+* balanced
+
+Current:
+
+* excessive empty gap
+
+FIX:
+
+* reduce internal vertical gap.
+
+### B. Side alignment
+
+Reference:
+
+* blue markers and graph boundary feel aligned.
+
+Current:
+
+* elements feel separated.
+
+FIX:
+
+* align them to the same plot/container geometry.
+
+### C. Border relationship
+
+Reference:
+
+* top border and graph region have a small controlled separation.
+
+Current:
+
+* large unnecessary empty region.
+
+FIX:
+
+* reproduce the reference spacing.
+
+### D. Graph stroke
+
+Reference:
+
+* clean, smooth, sharp red line.
+
+Current:
+
+* visually weak / poor line rendering.
+
+FIX:
+
+* improve stroke rendering and anti-aliasing.
+
+---
+
+## 10. DO NOT CHANGE THESE
+
+Do NOT change:
+
+* background
+* background rays
+* background gradient
+* multiplier position
+* multiplier font
+* multiplier size
+* airplane design
+* airplane size
+* graph color
+* red fill color
+* blue marker color
+* bottom markers
+* overall page design
+* existing animations
+* graph trajectory
+* 1.70x / 2.00x target behavior
+
+Only correct:
+
+**BOX SPACING + INTERNAL GAP + BORDER ALIGNMENT + LINE RENDERING QUALITY**
+
+---
+
+## 11. RESPONSIVE BEHAVIOR
+
+Do not hard-code a fix that only works at one screen resolution.
+
+The relationship between:
+
+* outer container,
+* graph plot area,
+* blue side markers,
+* top border,
+* bottom baseline
+
+must scale proportionally.
+
+Use the reference proportions as the design system.
+
+The graph should look correct at the current desktop viewport and remain visually consistent when the viewport changes.
+
+---
+
+## 12. FINAL VISUAL TEST
+
+After making the changes, compare the implementation directly against the reference screenshot.
+
+The result should immediately look like the same UI.
+
+Check:
+
+[ ] No oversized gap between top border and graph area.
+
+[ ] Blue side markers are correctly positioned.
+
+[ ] White/light upper border has the same spacing as reference.
+
+[ ] Graph plot area has the correct height.
+
+[ ] Bottom baseline is correctly positioned.
+
+[ ] Red curve is clean and sharp.
+
+[ ] Red curve has consistent stroke width.
+
+[ ] No pixelation.
+
+[ ] No jagged edges.
+
+[ ] No dotted/broken appearance.
+
+[ ] Red fill remains perfectly connected to the curve.
+
+[ ] All elements remain inside the correct graph box.
+
+[ ] Overall proportions match the reference.
+
+MOST IMPORTANT:
+
+Do not solve this by redesigning the component.
+
+Treat the first/reference image as the exact visual target and make the current website match its spacing, alignment, box proportions, and line quality.
