@@ -595,7 +595,7 @@ function AviatorGame() {
       return [
         { id: entryId, value: entryValue, isNew: true },
         ...entries,
-      ].slice(0, 18);
+      ].slice(0, history.length);
     });
   }, [crashAt, historyEntries, loaded, phase, round]);
 
