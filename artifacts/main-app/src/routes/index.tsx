@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Cloud, HelpCircle, History, Menu, Minus, Plus, ShieldCheck, Volume2 } from "lucide-react";
+import { Cloud, Gamepad2, HelpCircle, History, Languages, Menu, Minus, Music2, Plus, ShieldCheck, Sparkles, UserRound, Volume2 } from "lucide-react";
 
 import loadingAsset from "../assets/aviator/loading.png.asset.json";
 import airplaneAsset from "../assets/aviator/airplane.svg.asset.json";
@@ -242,6 +242,10 @@ function AviatorGame() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [soundOn, setSoundOn] = useState(false);
+  const [musicOn, setMusicOn] = useState(false);
+  const [animationOn, setAnimationOn] = useState(true);
+  const [profileAvatarIndex, setProfileAvatarIndex] = useState(0);
 
   useEffect(() => {
     const timer = window.setInterval(() => setProgress((value) => {
@@ -344,7 +348,32 @@ function AviatorGame() {
         <button className="help" onClick={() => setHelpOpen(true)}><HelpCircle /> <span>How to play?</span></button>
         <div className="balance"><strong>4,077</strong> INR</div>
         <button className="menu-button" aria-label="Open menu" onClick={() => setMenuOpen(!menuOpen)}><Menu /></button>
-        {menuOpen && <div className="menu-popover"><div><Volume2 /> Sound</div><div>My Bet History</div><div>Game limits</div><div>Language</div></div>}
+        {menuOpen && (
+          <div className="menu-popover" role="dialog" aria-label="Game menu" onClick={(event) => event.stopPropagation()}>
+            <div className="menu-profile">
+              <img src={avatars[profileAvatarIndex]?.url ?? avatar1.url} alt="" />
+              <strong>11020000102087</strong>
+              <button className="change-avatar" onClick={() => setProfileAvatarIndex((index) => (index + 1) % avatars.length)}><UserRound /><span>Change<br />Avatar</span></button>
+            </div>
+            <div className="menu-settings">
+              <button className="menu-setting" onClick={() => setSoundOn((value) => !value)}>
+                <Volume2 /><span>Sound</span><i className={soundOn ? "menu-switch on" : "menu-switch"}><b /></i>
+              </button>
+              <button className="menu-setting" onClick={() => setMusicOn((value) => !value)}>
+                <Music2 /><span>Music</span><i className={musicOn ? "menu-switch on" : "menu-switch"}><b /></i>
+              </button>
+              <button className="menu-setting" onClick={() => setAnimationOn((value) => !value)}>
+                <Sparkles /><span>Animation</span><i className={animationOn ? "menu-switch on" : "menu-switch"}><b /></i>
+              </button>
+            </div>
+            <div className="menu-divider" />
+            <div className="menu-links">
+              <button className="menu-link" onClick={() => setMenuOpen(false)}><History /><span>My Bet History</span></button>
+              <button className="menu-link" onClick={() => setMenuOpen(false)}><Gamepad2 /><span>Game Limits</span></button>
+              <button className="menu-link" onClick={() => setMenuOpen(false)}><Languages /><span>Language</span></button>
+            </div>
+          </div>
+        )}
       </header>
 
       <div className="game-layout">
