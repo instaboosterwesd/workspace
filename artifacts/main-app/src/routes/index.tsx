@@ -231,6 +231,12 @@ function historyTone(value: string) {
   return multiplierTone(Number.parseFloat(value));
 }
 
+type HistoryEntry = {
+  id: string;
+  value: string;
+  isNew?: boolean;
+};
+
 function LoadingScreen({ progress }: { progress: number }) {
   return (
     <div className="aviator-loader" aria-label="Loading game">
@@ -502,6 +508,10 @@ function AviatorGame() {
   const [animationOn, setAnimationOn] = useState(true);
   const [profileAvatarIndex, setProfileAvatarIndex] = useState(0);
   const [cashoutNotice, setCashoutNotice] = useState<CashoutNotice | null>(null);
+  const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>(() => (
+    history.map((value, index) => ({ id: `seed-${index}`, value }))
+  ));
+  const [historyAnimatingId, setHistoryAnimatingId] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = window.setInterval(() => setProgress((value) => {
@@ -571,6 +581,23 @@ function AviatorGame() {
     setCashoutNotice(null);
     setLiveBets(makeRoundBets(round));
   }, [round, loaded]);
+
+  useEffect(() => {
+    if (!loaded || phase !== "crashed") return;
+
+    const entryId = `round-${round}`;
+    const entryValue = `${crashAt.toFixed(2)}x`;
+    if (historyEntries[0]?.id === entryId) return;
+
+    setHistoryAnimatingId(entryId);
+    setHistoryEntries((entries) => {
+      if (entries[0]?.id === entryId) return entries;
+      return [
+        { id: entryId, value: entryValue, isNew: true },
+        ...entries,
+      ].slice(0, 18);
+    });
+  }, [crashAt, historyEntries, loaded, phase, round]);
 
   // Fill the list with 24 bets immediately, then add the remaining bets one at a time before takeoff.
   const visibleBets = useMemo(() => {
@@ -684,7 +711,12 @@ function AviatorGame() {
         <section className={historyOpen ? "play-area history-expanded" : "play-area"}>
           <div className={historyOpen ? "history-bar open" : "history-bar"}>
             {historyOpen && <strong className="history-title">ROUND HISTORY</strong>}
-            <div className="history-list">{history.map((value, index) => <span className={historyTone(value)} key={`${value}-${index}`}>{value}</span>)}</div>
+            <div
+              className={historyAnimatingId ? "history-list history-list-animating" : "history-list"}
+              key={historyAnimatingId ?? "history-stable"}
+            >
+              {historyEntries.map((entry) => <span className={historyTone(entry.value)} key={entry.id}>{entry.value}</span>)}
+            </div>
             {!historyOpen && (
               <div className="history-meta">
                 <button className="round-id" onClick={() => setHistoryOpen((value) => !value)}>Round ID: {round}<ChevronDown /></button>
