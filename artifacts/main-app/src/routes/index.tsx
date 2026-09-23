@@ -179,7 +179,7 @@ function pickBotCashout() {
 }
 
 function makeRoundBets(seed: number): LiveBet[] {
-  const count = 40;
+  const count = 40 + Math.floor(Math.random() * 11);
   const list: LiveBet[] = [];
   for (let i = 0; i < count; i += 1) {
     const amount = Math.round((300 + Math.random() * 7700) / 100) * 100;
@@ -494,7 +494,6 @@ function AviatorGame() {
   const [round, setRound] = useState(3325559);
   const [tab, setTab] = useState("All Bets");
   const [liveBets, setLiveBets] = useState<LiveBet[]>(() => makeRoundBets(0));
-  const [totalBets, setTotalBets] = useState(1464);
   const [menuOpen, setMenuOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -571,7 +570,6 @@ function AviatorGame() {
     if (!loaded) return;
     setCashoutNotice(null);
     setLiveBets(makeRoundBets(round));
-    setTotalBets(1100 + Math.floor(Math.random() * 700));
   }, [round, loaded]);
 
   // Fill the list with 24 bets immediately, then add the remaining bets one at a time before takeoff.
@@ -662,7 +660,7 @@ function AviatorGame() {
           <div className="side-tabs">
             {["All Bets", "My Bets", "Top"].map((item) => <button key={item} className={tab === item ? "active" : ""} onClick={() => setTab(item)}>{item}</button>)}
           </div>
-          <div className="bets-heading"><span>{tab.toUpperCase()}</span><strong>{tab === "All Bets" ? visibleBets.length + totalBets : 0}</strong></div>
+          <div className="bets-heading"><span>{tab.toUpperCase()}</span><strong>{tab === "All Bets" ? visibleBets.length : 0}</strong></div>
           <div className="bets-labels"><span>User</span><span>Bet INR</span><span>X</span><span>Cash out INR</span></div>
           <div className="bets-scroll">
             {tab === "All Bets" ? visibleBets.map((bet) => {
