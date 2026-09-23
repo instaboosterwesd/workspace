@@ -195,7 +195,7 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .round-intro { position: absolute; inset: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; animation: intro-reveal .35s ease-out both; }
 .partners-logo { width: min(310px, 39%); height: auto; }
 .round-progress { width: min(200px, 24%); height: 4px; margin-top: 8px; overflow: hidden; border-radius: 4px; background: oklch(0.27 0.02 255); }
-.round-progress-fill { width: 100%; height: 100%; border-radius: inherit; background: var(--game-red); animation: round-loading 10s linear forwards; }
+.round-progress-fill { width: 100%; height: 100%; border-radius: inherit; background: var(--game-red); animation: round-loading 7s linear forwards; }
 .official-badge { width: min(106px, 15%); height: auto; margin-top: 12px; }
 
 @keyframes rays-spin {

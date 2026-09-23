@@ -524,7 +524,7 @@ function AviatorGame() {
 
   useEffect(() => {
     if (!loaded) return;
-    const introDuration = 10000;
+    const introDuration = 7000;
     const crashDuration = 400;
     let roundIndex = 0;
     let roundStartedAt = Date.now();
@@ -776,6 +776,7 @@ function AviatorGame() {
               </>
             )}
             <div
+              key={phase === "crashed" ? `crash-plane-${round}` : "active-plane"}
               className={
                 phase === "intro"
                   ? "plane-holder intro-position"
