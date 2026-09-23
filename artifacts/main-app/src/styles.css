@@ -145,9 +145,11 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .axis-y-line { position: absolute; z-index: 1; left: 4.2%; top: 13px; bottom: 21px; width: 1px; background: oklch(0.74 0.05 250 / .28); opacity: .9; }
 .axis-x-line { position: absolute; z-index: 1; left: 4.2%; right: 0; bottom: 21px; height: 1px; background: oklch(0.96 0 0 / .42); opacity: .7; }
 .y-dots { position: absolute; z-index: 2; left: 2.2%; top: 10px; bottom: 19px; width: 4px; overflow: hidden; }
-.y-dots-track { height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.y-dots-track { position: absolute; inset: 0 0 auto; width: 100%; height: 200%; display: flex; flex-direction: column; }
+.y-dot-group { height: 50%; display: flex; flex-direction: column; justify-content: space-between; }
 .x-dots { position: absolute; z-index: 2; left: 4.2%; right: -14%; bottom: 9px; height: 3px; overflow: hidden; }
-.x-dots-track { width: 100%; height: 3px; display: flex; justify-content: space-between; }
+.x-dots-track { width: 200%; height: 3px; display: flex; }
+.x-dot-group { width: 50%; height: 3px; display: flex; justify-content: space-between; }
 .y-dots-track i, .x-dots-track i { flex: 0 0 auto; width: 4px; height: 4px; border-radius: 50%; background: var(--game-blue); }
 .x-dots-track i { background: var(--foreground); width: 3px; height: 3px; }
 .y-dots-track.scrolling { animation: dots-down 2.8s linear infinite; }
@@ -174,8 +176,8 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
   from { transform: translate(-50%, 50%) rotate(0deg); }
   to { transform: translate(-50%, 50%) rotate(360deg); }
 }
-@keyframes dots-left { from { transform: translateX(0); } to { transform: translateX(-13%); } }
-@keyframes dots-down { from { transform: translateY(0); } to { transform: translateY(11%); } }
+@keyframes dots-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes dots-down { from { transform: translateY(-50%); } to { transform: translateY(0); } }
 @keyframes plane-crash {
   0% { transform: translate(-6%, 18%) rotate(0deg) scale(1); opacity: 1; }
   40% { transform: translate(14%, 20%) rotate(-8deg) scale(1.04); opacity: 1; }
