@@ -46,9 +46,12 @@ const curveRiseExponent = 1.7;
 const graphStartX = 4;
 const graphBaselineY = 95;
 const upperTarget = { x: 77, y: 17.1 };
-const maxTarget = { x: 94, y: 8 };
+const lowerTarget = { x: 87.7, y: 28.6 };
 const upperTangentSlope = -0.82;
-const maxTangentSlope = -0.52;
+const lowerTangentSlope = -0.61;
+const targetTransitionMs = 1350;
+const targetHoldMs = 420;
+const endpointCycleMs = targetHoldMs + targetTransitionMs + targetHoldMs + targetTransitionMs;
 
 type FlightPoint = { x: number; y: number };
 type EndpointState = FlightPoint & { multiplier: number; tangentSlope: number };
@@ -97,16 +100,36 @@ function endpointStateAt(progress: number, crashAt: number): EndpointState {
     };
   }
 
-  const afterUpperProgress = upperProgress < 1
-    ? (safeProgress - upperProgress) / (1 - upperProgress)
-    : 1;
-  const continuationProgress = smoothStep(clamp(afterUpperProgress, 0, 1));
+  const elapsedSinceUpper = (safeProgress - upperProgress) * flightDurationForTarget(crashAt);
+  const cyclePosition = elapsedSinceUpper % endpointCycleMs;
+  const upperHoldEnd = targetHoldMs;
+  const lowerTransitionEnd = upperHoldEnd + targetTransitionMs;
+  const lowerHoldEnd = lowerTransitionEnd + targetHoldMs;
 
+  if (cyclePosition <= upperHoldEnd) {
+    return { ...upperTarget, multiplier, tangentSlope: upperTangentSlope };
+  }
+
+  if (cyclePosition <= lowerTransitionEnd) {
+    const transition = smoothStep((cyclePosition - upperHoldEnd) / targetTransitionMs);
+    return {
+      x: lerp(upperTarget.x, lowerTarget.x, transition),
+      y: lerp(upperTarget.y, lowerTarget.y, transition),
+      multiplier,
+      tangentSlope: lerp(upperTangentSlope, lowerTangentSlope, transition),
+    };
+  }
+
+  if (cyclePosition <= lowerHoldEnd) {
+    return { ...lowerTarget, multiplier, tangentSlope: lowerTangentSlope };
+  }
+
+  const transition = smoothStep((cyclePosition - lowerHoldEnd) / targetTransitionMs);
   return {
-    x: lerp(upperTarget.x, maxTarget.x, continuationProgress),
-    y: lerp(upperTarget.y, maxTarget.y, continuationProgress),
+    x: lerp(lowerTarget.x, upperTarget.x, transition),
+    y: lerp(lowerTarget.y, upperTarget.y, transition),
     multiplier,
-    tangentSlope: lerp(upperTangentSlope, maxTangentSlope, continuationProgress),
+    tangentSlope: lerp(lowerTangentSlope, upperTangentSlope, transition),
   };
 }
 
@@ -367,7 +390,7 @@ function AviatorGame() {
 
   useEffect(() => {
     if (!loaded) return;
-    const introDuration = 3100;
+    const introDuration = 10000;
     const crashDuration = 1700;
     let roundIndex = 0;
     let roundStartedAt = Date.now();
