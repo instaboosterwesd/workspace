@@ -7,4 +7,4 @@ When a round ends, prepend the new crash multiplier to the visible history. The 
 
 **Why:** The reference recording shows a coordinated list movement, not an isolated new-chip animation or an instant layout jump.
 
-**How to apply:** Animate the history track from one chip-width left to its settled position over roughly 1.15 seconds. Keep the newest result first and preserve the existing color tiers.
+**How to apply:** Animate the history track from one chip-width left to its settled position over roughly 1.15 seconds. Keep the newest result first and preserve the existing color tiers. At a 1024px reference viewport, the closed bar needs a readable two-line rhythm: visibly padded multiplier chips above the round ID, not a compressed 36px strip.
