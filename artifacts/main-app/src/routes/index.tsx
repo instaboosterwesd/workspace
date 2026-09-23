@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Cloud, Gamepad2, HelpCircle, History, Languages, Menu, Minus, Music2, Plus, ShieldCheck, Sparkles, UserRound, Volume2 } from "lucide-react";
+import { ChevronDown, Gamepad2, HelpCircle, History, Languages, Menu, Minus, Music2, Plus, ShieldCheck, Sparkles, UserRound, Volume2 } from "lucide-react";
 
 import loadingAsset from "../assets/aviator/loading.png.asset.json";
 import airplaneAsset from "../assets/aviator/airplane.svg.asset.json";
@@ -401,11 +401,19 @@ function AviatorGame() {
 
         <section className={historyOpen ? "play-area history-expanded" : "play-area"}>
           <div className={historyOpen ? "history-bar open" : "history-bar"}>
-            {historyOpen && <strong className="history-title">ROUND HISTORY</strong>}
-            <div className="history-list">{history.map((value, index) => <span className={historyTone(value)} key={`${value}-${index}`}>{value}</span>)}</div>
+            {historyOpen ? (
+              <>
+                <strong className="history-title">ROUND HISTORY</strong>
+                <div className="history-list">{history.map((value, index) => <span className={historyTone(value)} key={`${value}-${index}`}>{value}</span>)}</div>
+              </>
+            ) : (
+              <div className="history-preview">
+                <strong>36.97x</strong>
+                <span>Ping:170ms</span>
+              </div>
+            )}
             <div className="history-actions">
-              <button className={historyOpen ? "history-toggle active" : "history-toggle"} aria-label={historyOpen ? "Close round history" : "Open round history"} aria-expanded={historyOpen} onClick={() => setHistoryOpen((value) => !value)}><History /></button>
-              <button className="history-cloud" aria-label="Saved rounds"><Cloud /></button>
+              <button className={historyOpen ? "history-toggle active" : "history-toggle"} aria-label={historyOpen ? "Close round history" : "Open round history"} aria-expanded={historyOpen} onClick={() => setHistoryOpen((value) => !value)}><History /><ChevronDown /></button>
             </div>
           </div>
           <div className={`flight-stage phase-${phase}`}>
