@@ -14,3 +14,7 @@ When the red line needs a visual correction into the aircraft, keep the original
 **Why:** The reference connection is a direct straight attachment from the lower-left track into the plane's rear underside hook; the previous upward endpoint left the line visibly high above the intended connection.
 
 **How to apply:** Use the live curve endpoint for the cubic path, then add the independent line endpoint with `L` for both the stroked path and the filled area.
+
+When the round crashes, hide the graph immediately and send the plane straight forward from its current endpoint. Do not hold it in place or arc it upward; the exit should complete quickly while preserving the crash height.
+
+**Why:** A low crash such as 1.70x must leave from its low position immediately, while a higher crash must leave from its own current height without an artificial delay.
