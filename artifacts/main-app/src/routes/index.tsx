@@ -617,7 +617,7 @@ function AviatorGame() {
   const curveEnd = useMemo(() => endpointStateAt(flight, crashAt), [flight, crashAt]);
   const lineEnd = useMemo(() => ({
     x: curveEnd.x + 0.75,
-    y: curveEnd.y - 0.45,
+    y: curveEnd.y + 0.35,
   }), [curveEnd]);
   const curve = useMemo(() => {
     const { startControl, endControl } = curveControlsAt(flight, crashAt);
