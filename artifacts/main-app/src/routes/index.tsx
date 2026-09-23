@@ -57,17 +57,10 @@ function graphXAt(progress: number) {
 
 function flightPointAt(progress: number): FlightPoint {
   const safeProgress = clamp(progress, 0, 1);
-  const firstHighPoint = Math.log(1.77) / Math.log(maxMultiplier);
-  const oscillationProgress = clamp(
-    (safeProgress - firstHighPoint) / (1 - firstHighPoint),
-    0,
-    1,
-  );
-  const dip = Math.max(0, Math.sin(oscillationProgress * Math.PI * 6)) * 18;
 
   return {
     x: graphXAt(safeProgress),
-    y: clamp(rocketYAt(safeProgress) + dip, 8, 95),
+    y: clamp(rocketYAt(safeProgress), 8, 95),
   };
 }
 
@@ -347,8 +340,7 @@ function AviatorGame() {
     return liveBets;
   }, [liveBets, phase, roundProgress]);
 
-  // Keep the plane on the moving endpoint. After the first high touch point,
-  // the reference path makes short down/up dips instead of staying flat.
+  // Keep the plane on the endpoint of one continuous, rising reference path.
   const curveEnd = useMemo(() => flightPointAt(flight), [flight]);
   const curve = useMemo(() => {
     const points: string[] = [];
