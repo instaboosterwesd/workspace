@@ -573,7 +573,6 @@ function AviatorGame() {
               <defs><linearGradient id="flightFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="var(--game-red-soft)" /><stop offset="1" stopColor="var(--game-red-deep)" /></linearGradient></defs>
               <path d={`${curve} L ${curveEnd.x} 95 Z`} fill="url(#flightFill)" />
               <path d={curve} fill="none" stroke="var(--game-red)" strokeWidth="2" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-                <path className="flight-guide-line" d={`M ${curveEnd.x} ${curveEnd.y} L ${curveEnd.x} 95`} fill="none" stroke="var(--game-red)" strokeWidth="2" strokeLinecap="butt" vectorEffect="non-scaling-stroke" />
             </svg>
             {phase === "intro" ? (
               <div className="round-intro gap-[0px]" aria-label="Official partners">
