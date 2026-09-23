@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 import { ChevronDown, Gamepad2, HelpCircle, History, Languages, Menu, Minus, Music2, Plus, ShieldCheck, Sparkles, UserRound, Volume2 } from "lucide-react";
 
 import loadingAsset from "../assets/aviator/loading.png.asset.json";
-import airplaneAsset from "../assets/aviator/airplane.svg.asset.json";
 import wordmarkAsset from "../assets/aviator/wordmark.svg.asset.json";
 import officialAsset from "../assets/aviator/official.svg.asset.json";
 import partnersLogoAsset from "../assets/aviator/partners-logo.svg.asset.json";
@@ -19,9 +18,6 @@ import avatar9 from "../assets/aviator/avatar-9.png.asset.json";
 import avatar10 from "../assets/aviator/avatar-10.png.asset.json";
 import avatar11 from "../assets/aviator/avatar-11.png.asset.json";
 import avatar12 from "../assets/aviator/avatar-12.png.asset.json";
-import propellerFrame1 from "../assets/aviator/propeller-frame-1.svg.asset.json";
-import propellerFrame2 from "../assets/aviator/propeller-frame-2.svg.asset.json";
-import propellerFrame3 from "../assets/aviator/propeller-frame-3.svg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -38,7 +34,8 @@ export const Route = createFileRoute("/")({
 });
 
 const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, avatar9, avatar10, avatar11, avatar12];
-const planeFrames = [propellerFrame1.url, propellerFrame2.url, propellerFrame3.url];
+const planeBody = "/aviator/plane-body.svg";
+const fanFrames = ["/aviator/fan-frame-1.svg", "/aviator/fan-frame-2.svg", "/aviator/fan-frame-3.svg"];
 
 type LiveBet = { id: string; name: string; avatar: number; amount: number; cashAt: number | null };
 
@@ -294,7 +291,7 @@ function AviatorGame() {
   useEffect(() => {
     if (!loaded) return;
     const timer = window.setInterval(() => {
-      setFanFrameIndex((frame) => (frame + 1) % planeFrames.length);
+      setFanFrameIndex((frame) => (frame + 1) % fanFrames.length);
     }, 72);
     return () => window.clearInterval(timer);
   }, [loaded]);
@@ -319,7 +316,7 @@ function AviatorGame() {
   // The source graph sits just above the white x-axis dots. Keep its start
   // aligned with the blue y-axis and let the plane travel on the line.
   const curveEnd = useMemo(() => ({ x: 4 + flight * 77, y: 95 - flight * 77 }), [flight]);
-  const planeFrame = planeFrames[fanFrameIndex % planeFrames.length] ?? propellerFrame1.url;
+  const fanFrame = fanFrames[fanFrameIndex % fanFrames.length] ?? "/aviator/fan-frame-1.svg";
 
   const curve = useMemo(() => {
     const { x: endX, y: endY } = curveEnd;
@@ -447,14 +444,16 @@ function AviatorGame() {
                 </div>
                 <img className="official-badge" src={officialAsset.url} alt="Spribe official game" />
                 <div className="intro-plane-holder" aria-hidden="true">
-                  <img key={planeFrame} className="intro-plane" src={planeFrame} alt="" />
+                  <img className="intro-plane" src={planeBody} alt="" />
+                  <img key={fanFrame} className="intro-fan" src={fanFrame} alt="" />
                 </div>
               </div>
             ) : (
               <>
                 {phase === "flying" && (
                   <div className="plane-holder" style={{ left: `${curveEnd.x}%`, bottom: `${100 - curveEnd.y}%` }}>
-                    <img key={planeFrame} className="flight-plane" src={planeFrame} alt="Flying airplane" />
+                    <img className="flight-plane" src={planeBody} alt="Flying airplane" />
+                    <img key={fanFrame} className="flight-fan" src={fanFrame} alt="" aria-hidden="true" />
                   </div>
                 )}
                 <div className={`multiplier ${phase === "crashed" ? "crashed" : ""}`}>
