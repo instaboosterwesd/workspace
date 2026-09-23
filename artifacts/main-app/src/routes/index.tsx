@@ -41,6 +41,10 @@ const planeFrames = [planeFrameSmall, planeFrameMedium, planeFrameBig];
 const planeFrameNames = ["small", "medium", "big"] as const;
 const maxMultiplier = 20;
 
+type FlightPoint = { x: number; y: number };
+
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+
 function rocketYAt(progress: number) {
   const upwardProgress = 1 - Math.pow(1 - progress, 12);
   return 95 - upwardProgress * 82;
@@ -49,6 +53,22 @@ function rocketYAt(progress: number) {
 function graphXAt(progress: number) {
   const horizontalProgress = 1 - Math.pow(1 - progress, 8);
   return 4 + horizontalProgress * 79;
+}
+
+function flightPointAt(progress: number): FlightPoint {
+  const safeProgress = clamp(progress, 0, 1);
+  const firstHighPoint = Math.log(1.77) / Math.log(maxMultiplier);
+  const oscillationProgress = clamp(
+    (safeProgress - firstHighPoint) / (1 - firstHighPoint),
+    0,
+    1,
+  );
+  const dip = Math.max(0, Math.sin(oscillationProgress * Math.PI * 6)) * 18;
+
+  return {
+    x: graphXAt(safeProgress),
+    y: clamp(rocketYAt(safeProgress) + dip, 8, 95),
+  };
 }
 
 type LiveBet = { id: string; name: string; avatar: number; amount: number; cashAt: number | null };
@@ -327,24 +347,20 @@ function AviatorGame() {
     return liveBets;
   }, [liveBets, phase, roundProgress]);
 
-  // The source graph sits just above the white x-axis dots. Keep its start
-  // aligned with the blue y-axis and let the plane travel on the line.
-  const curveEnd = useMemo(() => ({
-    x: graphXAt(flight),
-    y: rocketYAt(flight),
-  }), [flight]);
+  // Keep the plane on the moving endpoint. After the first high touch point,
+  // the reference path makes short down/up dips instead of staying flat.
+  const curveEnd = useMemo(() => flightPointAt(flight), [flight]);
   const curve = useMemo(() => {
     const points: string[] = [];
-    const steps = 26;
+    const steps = 60;
     for (let i = 0; i <= steps; i += 1) {
       const t = i / steps;
       const progress = flight * t;
-      const x = graphXAt(progress);
-      const y = rocketYAt(progress);
+      const { x, y } = flightPointAt(progress);
       points.push(`${x.toFixed(2)} ${y.toFixed(2)}`);
     }
     return `M ${points.join(" L ")}`;
-  }, [curveEnd, flight]);
+  }, [flight]);
 
   if (!loaded) return <LoadingScreen progress={progress} />;
 
