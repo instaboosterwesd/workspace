@@ -49,9 +49,10 @@ const upperTarget = { x: 77, y: 17.1 };
 const lowerTarget = { x: 87.7, y: 28.6 };
 const upperTangentSlope = -0.82;
 const lowerTangentSlope = -0.61;
-const targetTransitionMs = 1350;
-const targetHoldMs = 420;
-const endpointCycleMs = targetHoldMs + targetTransitionMs + targetHoldMs + targetTransitionMs;
+const upperTouchMultiplier = 1.7;
+const firstLowerTouchMultiplier = 2.2;
+const secondUpperTouchMultiplier = 2.7;
+const repeatingTouchGap = 1;
 
 type FlightPoint = { x: number; y: number };
 type EndpointState = FlightPoint & { multiplier: number; tangentSlope: number };
@@ -85,10 +86,13 @@ function flightDurationForTarget(target: number) {
 function endpointStateAt(progress: number, crashAt: number): EndpointState {
   const safeProgress = clamp(progress, 0, 1);
   const multiplier = Math.pow(crashAt, safeProgress);
-  const upperProgress = Math.log(1.7) / Math.log(crashAt);
 
-  if (safeProgress <= upperProgress) {
-    const riseProgress = upperProgress > 0 ? safeProgress / upperProgress : 1;
+  if (multiplier <= upperTouchMultiplier) {
+    const riseProgress = clamp(
+      (multiplier - 1) / (upperTouchMultiplier - 1),
+      0,
+      1,
+    );
     const horizontalProgress = Math.pow(riseProgress, curveProgressExponent);
     const upwardProgress = Math.pow(horizontalProgress, curveRiseExponent);
 
@@ -100,36 +104,39 @@ function endpointStateAt(progress: number, crashAt: number): EndpointState {
     };
   }
 
-  const elapsedSinceUpper = (safeProgress - upperProgress) * flightDurationForTarget(crashAt);
-  const cyclePosition = elapsedSinceUpper % endpointCycleMs;
-  const upperHoldEnd = targetHoldMs;
-  const lowerTransitionEnd = upperHoldEnd + targetTransitionMs;
-  const lowerHoldEnd = lowerTransitionEnd + targetHoldMs;
+  let from = upperTarget;
+  let to = lowerTarget;
+  let segmentStart = upperTouchMultiplier;
+  let segmentEnd = firstLowerTouchMultiplier;
 
-  if (cyclePosition <= upperHoldEnd) {
-    return { ...upperTarget, multiplier, tangentSlope: upperTangentSlope };
+  if (multiplier >= firstLowerTouchMultiplier && multiplier < secondUpperTouchMultiplier) {
+    from = lowerTarget;
+    to = upperTarget;
+    segmentStart = firstLowerTouchMultiplier;
+    segmentEnd = secondUpperTouchMultiplier;
+  } else if (multiplier >= secondUpperTouchMultiplier) {
+    const segmentIndex = Math.floor(multiplier - secondUpperTouchMultiplier);
+    const startsAtUpper = segmentIndex % 2 === 0;
+    from = startsAtUpper ? upperTarget : lowerTarget;
+    to = startsAtUpper ? lowerTarget : upperTarget;
+    segmentStart = secondUpperTouchMultiplier + segmentIndex * repeatingTouchGap;
+    segmentEnd = segmentStart + repeatingTouchGap;
   }
 
-  if (cyclePosition <= lowerTransitionEnd) {
-    const transition = smoothStep((cyclePosition - upperHoldEnd) / targetTransitionMs);
-    return {
-      x: lerp(upperTarget.x, lowerTarget.x, transition),
-      y: lerp(upperTarget.y, lowerTarget.y, transition),
-      multiplier,
-      tangentSlope: lerp(upperTangentSlope, lowerTangentSlope, transition),
-    };
-  }
-
-  if (cyclePosition <= lowerHoldEnd) {
-    return { ...lowerTarget, multiplier, tangentSlope: lowerTangentSlope };
-  }
-
-  const transition = smoothStep((cyclePosition - lowerHoldEnd) / targetTransitionMs);
+  const transition = smoothStep(clamp(
+    (multiplier - segmentStart) / (segmentEnd - segmentStart),
+    0,
+    1,
+  ));
   return {
-    x: lerp(lowerTarget.x, upperTarget.x, transition),
-    y: lerp(lowerTarget.y, upperTarget.y, transition),
+    x: lerp(from.x, to.x, transition),
+    y: lerp(from.y, to.y, transition),
     multiplier,
-    tangentSlope: lerp(lowerTangentSlope, upperTangentSlope, transition),
+    tangentSlope: lerp(
+      from === upperTarget ? upperTangentSlope : lowerTangentSlope,
+      to === upperTarget ? upperTangentSlope : lowerTangentSlope,
+      transition,
+    ),
   };
 }
 
