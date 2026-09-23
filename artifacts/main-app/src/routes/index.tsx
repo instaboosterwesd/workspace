@@ -99,7 +99,7 @@ function BetPanel({ initial }: { initial: number }) {
   const [rounds, setRounds] = useState(100);
   const change = (by: number) => setAmount((value) => Math.max(10, value + by));
   return (
-    <section className="bet-panel">
+    <section className={mode === "Auto" ? "bet-panel auto-mode" : "bet-panel"}>
       <div className="bet-tabs">
         {(["Bet", "Auto"] as const).map((item) => <button key={item} className={mode === item ? "active" : ""} onClick={() => setMode(item)}>{item}</button>)}
       </div>
@@ -125,7 +125,10 @@ function BetPanel({ initial }: { initial: number }) {
           <div className="auto-cashout">
             <span>Auto Cash Out</span>
             <button className={autoCashOut ? "switch on" : "switch"} aria-pressed={autoCashOut} aria-label="Auto cash out" onClick={() => setAutoCashOut(!autoCashOut)}><i /></button>
-            <strong>{autoTarget.toFixed(2)}</strong>
+            <strong>
+              <span>{autoTarget.toFixed(1)}</span>
+              <button className="auto-clear" aria-label="Clear auto cash out" onClick={() => setAutoCashOut(false)}>×</button>
+            </strong>
           </div>
         </div>
       )}
