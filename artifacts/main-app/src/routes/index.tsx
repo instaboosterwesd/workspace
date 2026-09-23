@@ -401,15 +401,12 @@ function AviatorGame() {
 
         <section className={historyOpen ? "play-area history-expanded" : "play-area"}>
           <div className={historyOpen ? "history-bar open" : "history-bar"}>
-            {historyOpen ? (
-              <>
-                <strong className="history-title">ROUND HISTORY</strong>
-                <div className="history-list">{history.map((value, index) => <span className={historyTone(value)} key={`${value}-${index}`}>{value}</span>)}</div>
-              </>
-            ) : (
-              <div className="history-preview">
-                <strong>36.97x</strong>
-                <span>Ping:170ms</span>
+            {historyOpen && <strong className="history-title">ROUND HISTORY</strong>}
+            <div className="history-list">{history.map((value, index) => <span className={historyTone(value)} key={`${value}-${index}`}>{value}</span>)}</div>
+            {!historyOpen && (
+              <div className="history-meta">
+                <button className="round-id" onClick={() => setHistoryOpen((value) => !value)}>Round ID: {round}<ChevronDown /></button>
+                <span>Ping:167ms</span>
               </div>
             )}
             <div className="history-actions">
