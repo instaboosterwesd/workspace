@@ -288,6 +288,9 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .stake-row svg { width: 12px; height: 12px; }.stake-row strong { display: block; min-width: 0; text-align: center; font-size: 17px; line-height: 1; }
 .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; margin-top: 3px; }
 .quick-grid button { height: 15px; border-radius: 11px; background: var(--game-row); color: var(--muted-foreground); font-size: 11px; }
+.waiting-action { display: flex; min-width: 0; flex-direction: column; gap: 5px; }
+.waiting-label { overflow: hidden; color: var(--foreground); font-size: 13px; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+.waiting-action .main-bet { height: 54px; }
 .main-bet { height: 58px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 16px; border: 2px solid oklch(0.82 0.17 140); background: var(--game-green); text-shadow: 0 1px 1px oklch(0 0 0 / .35); }
 .main-bet span { font-size: 16px; }.main-bet b { font-size: 21px; font-weight: 400; }.main-bet.loading, .main-bet.waiting-next, .main-bet.lost { background: var(--game-red); border-color: oklch(0.76 0.2 25); }.main-bet.cash-out-action { background: oklch(0.7 0.18 65); border-color: oklch(0.86 0.2 75); color: #fff; }.main-bet.cashed-out { background: var(--game-green); border-color: oklch(0.82 0.17 140); }
 .main-bet:disabled { cursor: default; }

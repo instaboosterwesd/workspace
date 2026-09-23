@@ -315,9 +315,7 @@ function BetPanel({
     cashoutResult ? "cashed-out" : "",
     isLost ? "lost" : "",
   ].filter(Boolean).join(" ");
-  const buttonLabel = waitingForNextRound
-    ? "WAITING FOR NEXT ROUND"
-    : phase === "intro"
+  const buttonLabel = phase === "intro"
       ? (placed ? "CANCEL" : "BET")
     : isFlyingBet
       ? "CASH OUT"
@@ -377,14 +375,27 @@ function BetPanel({
             {[10, 100, 500, 1000].map((value) => <button key={value} disabled={stakeLocked} onClick={() => setAmount(value)}>{value.toLocaleString()}</button>)}
           </div>
         </div>
-        <button
-          className={buttonClass}
-          disabled={phase === "crashed" ? !waitingForNextRound : Boolean(cashoutResult)}
-          onClick={handleMainBet}
-        >
-          <span>{buttonLabel}</span>
-          <b>{buttonAmount}</b>
-        </button>
+        {waitingForNextRound ? (
+          <div className="waiting-action">
+            <span className="waiting-label">WAITING FOR NEXT ROUND</span>
+            <button
+              className={buttonClass}
+              disabled={phase === "crashed" ? !waitingForNextRound : Boolean(cashoutResult)}
+              onClick={handleMainBet}
+            >
+              <span>CANCEL</span>
+            </button>
+          </div>
+        ) : (
+          <button
+            className={buttonClass}
+            disabled={phase === "crashed" ? !waitingForNextRound : Boolean(cashoutResult)}
+            onClick={handleMainBet}
+          >
+            <span>{buttonLabel}</span>
+            <b>{buttonAmount}</b>
+          </button>
+        )}
       </div>
       {mode === "Auto" && (
         <div className="auto-row">
