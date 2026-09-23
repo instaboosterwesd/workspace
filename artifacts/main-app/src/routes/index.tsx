@@ -39,6 +39,7 @@ export const Route = createFileRoute("/")({
 const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, avatar9, avatar10, avatar11, avatar12];
 const planeFrames = [planeFrameSmall, planeFrameMedium, planeFrameBig];
 const planeFrameNames = ["small", "medium", "big"] as const;
+const maxMultiplier = 20;
 
 type LiveBet = { id: string; name: string; avatar: number; amount: number; cashAt: number | null };
 
@@ -268,10 +269,9 @@ function AviatorGame() {
   useEffect(() => {
     if (!loaded) return;
     const started = Date.now();
-    // The recordings use a short partner/countdown screen, then a roughly
-    // ten-second flight before the graph locks and the round ends.
+    // Keep each flight long enough to visibly reach the 10x and 20x range.
     const introDuration = 3100;
-    const flightDuration = 10000;
+    const flightDuration = 18000;
     const crashDuration = 1700;
     const roundDuration = introDuration + flightDuration + crashDuration;
     const timer = window.setInterval(() => {
@@ -285,16 +285,16 @@ function AviatorGame() {
         setRoundProgress(elapsed / introDuration);
         setMultiplier(1);
       } else if (elapsed < introDuration + flightDuration) {
-        const flightElapsed = (elapsed - introDuration) / 1000;
+          const flightProgress = Math.min((elapsed - introDuration) / flightDuration, 1);
         setPhase("flying");
-        setFlight(Math.min(flightElapsed / 10, 1));
+          setFlight(flightProgress);
         setRoundProgress(1);
-        setMultiplier(Number((1 + flightElapsed * 0.042 + flightElapsed * flightElapsed * 0.0034).toFixed(2)));
+          setMultiplier(Number(Math.pow(maxMultiplier, flightProgress).toFixed(2)));
       } else {
         setPhase("crashed");
         setFlight(1);
         setRoundProgress(1);
-        setMultiplier(2.95);
+          setMultiplier(maxMultiplier);
       }
     }, 50);
     return () => window.clearInterval(timer);
@@ -319,7 +319,10 @@ function AviatorGame() {
 
   // The source graph sits just above the white x-axis dots. Keep its start
   // aligned with the blue y-axis and let the plane travel on the line.
-  const curveEnd = useMemo(() => ({ x: 4 + flight * 77, y: 95 - flight * 77 }), [flight]);
+  const curveEnd = useMemo(() => ({
+    x: 4 + flight * 79,
+    y: 95 - flight * 82,
+  }), [flight]);
   const curve = useMemo(() => {
     const { x: endX, y: endY } = curveEnd;
     const graphBase = 95;
