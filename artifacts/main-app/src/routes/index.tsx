@@ -59,7 +59,7 @@ function graphXAt(progress: number) {
 const firstUpperProgress = Math.log(1.77) / Math.log(maxMultiplier);
 const upperTargetY = rocketYAt(firstUpperProgress);
 const lowerTargetY = upperTargetY + 17;
-const endpointCycleSpan = 0.09;
+const endpointCycleSpan = 0.28;
 
 function endpointYAt(progress: number) {
   if (progress <= firstUpperProgress) return rocketYAt(progress);
@@ -331,9 +331,9 @@ function AviatorGame() {
   useEffect(() => {
     if (!loaded) return;
     const started = Date.now();
-    // Keep each flight long enough to visibly reach the 10x and 20x range.
+    // Match the slower pacing of the supplied B-folder reference recording.
     const introDuration = 3100;
-    const flightDuration = 18000;
+    const flightDuration = 45000;
     const crashDuration = 1700;
     const roundDuration = introDuration + flightDuration + crashDuration;
     const timer = window.setInterval(() => {
