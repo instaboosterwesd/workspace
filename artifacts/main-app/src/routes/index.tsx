@@ -295,7 +295,7 @@ function AviatorGame() {
     if (!loaded) return;
     const timer = window.setInterval(() => {
       setFanFrameIndex((frame) => (frame + 1) % planeFrames.length);
-    }, 90);
+    }, 72);
     return () => window.clearInterval(timer);
   }, [loaded]);
 
@@ -319,7 +319,7 @@ function AviatorGame() {
   // The source graph sits just above the white x-axis dots. Keep its start
   // aligned with the blue y-axis and let the plane travel on the line.
   const curveEnd = useMemo(() => ({ x: 4 + flight * 77, y: 95 - flight * 77 }), [flight]);
-  const planeFrame = planeFrames[fanFrameIndex] ?? propellerFrame1.url;
+  const planeFrame = planeFrames[fanFrameIndex % planeFrames.length] ?? propellerFrame1.url;
 
   const curve = useMemo(() => {
     const { x: endX, y: endY } = curveEnd;
@@ -447,14 +447,14 @@ function AviatorGame() {
                 </div>
                 <img className="official-badge" src={officialAsset.url} alt="Spribe official game" />
                 <div className="intro-plane-holder" aria-hidden="true">
-                  <img className="intro-plane" src={planeFrame} alt="" />
+                  <img key={planeFrame} className="intro-plane" src={planeFrame} alt="" />
                 </div>
               </div>
             ) : (
               <>
                 {phase === "flying" && (
                   <div className="plane-holder" style={{ left: `${curveEnd.x}%`, bottom: `${100 - curveEnd.y}%` }}>
-                    <img className="flight-plane" src={planeFrame} alt="Flying airplane" />
+                    <img key={planeFrame} className="flight-plane" src={planeFrame} alt="Flying airplane" />
                   </div>
                 )}
                 <div className={`multiplier ${phase === "crashed" ? "crashed" : ""}`}>
