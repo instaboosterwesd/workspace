@@ -445,23 +445,27 @@ function AviatorGame() {
                   <div className="round-progress-fill" />
                 </div>
                 <img className="official-badge" src={officialAsset.url} alt="Spribe official game" />
-                <div className="intro-plane-holder" aria-hidden="true">
-                  <PlaneAnimation animationOn={animationOn} />
-                </div>
               </div>
             ) : (
               <>
-                {phase === "flying" && (
-                  <div className="plane-holder" style={{ left: `${curveEnd.x}%`, bottom: `${100 - curveEnd.y}%` }}>
-                    <PlaneAnimation animationOn={animationOn} label="Flying airplane" />
-                  </div>
-                )}
                 <div className={`multiplier ${phase === "crashed" ? "crashed" : ""}`}>
                   {phase === "crashed" && <small>FLEW AWAY!</small>}
                   {multiplier.toFixed(2)}x
                 </div>
               </>
             )}
+            <div
+              className={
+                phase === "intro"
+                  ? "plane-holder intro-position"
+                  : phase === "flying"
+                    ? "plane-holder flight-position"
+                    : "plane-holder is-hidden"
+              }
+              style={phase === "flying" ? { left: `${curveEnd.x}%`, bottom: `${100 - curveEnd.y}%` } : undefined}
+            >
+              <PlaneAnimation animationOn={animationOn} {...(phase === "flying" ? { label: "Flying airplane" } : {})} />
+            </div>
           </div>
           <div className="bet-panels"><BetPanel initial={90} /><BetPanel initial={10} /></div>
         </section>
