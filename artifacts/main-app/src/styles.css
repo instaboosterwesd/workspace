@@ -158,7 +158,12 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .flight-curve { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; overflow: hidden; }
 .flight-curve.is-hidden { opacity: 0; }
 .plane-holder { position: absolute; z-index: 2; width: clamp(92px, 10vw, 148px); aspect-ratio: 150 / 74; transform: translate(-6%, 18%); transition: left 80ms linear, bottom 80ms linear; }
-.plane-animation-frame { position: absolute; inset: 0; display: block; width: 100%; height: auto; }
+.plane-frame-stack { position: absolute; inset: 0; }
+.plane-frame-layer { position: absolute; inset: 0; display: block; width: 100%; height: auto; opacity: 0; pointer-events: none; }
+.plane-frame-layer.small { animation: plane-frame-small 720ms linear infinite; }
+.plane-frame-layer.medium { animation: plane-frame-medium 720ms linear infinite; }
+.plane-frame-layer.big { animation: plane-frame-big 720ms linear infinite; }
+.plane-frame-stack.paused .plane-frame-layer { animation-play-state: paused; }
 .multiplier { position: absolute; z-index: 3; inset: 42% 0 auto; text-align: center; font-size: clamp(52px, 6.5vw, 100px); font-weight: 800; line-height: 1; }
 .multiplier small { display: block; margin-bottom: 8px; color: #fff; font-size: clamp(17px, 2vw, 29px); }
 .multiplier.crashed { color: var(--game-red); font-size: clamp(58px, 8vw, 100px); animation: crash-text .28s ease-out both; }
@@ -174,6 +179,22 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 @keyframes rays-spin {
   from { transform: translate(-50%, 50%) rotate(0deg); }
   to { transform: translate(-50%, 50%) rotate(360deg); }
+}
+@keyframes plane-frame-small {
+  0%, 24.99% { opacity: 1; }
+  25%, 100% { opacity: 0; }
+}
+@keyframes plane-frame-medium {
+  0%, 24.99% { opacity: 0; }
+  25%, 49.99% { opacity: 1; }
+  50%, 74.99% { opacity: 0; }
+  75%, 99.99% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes plane-frame-big {
+  0%, 49.99% { opacity: 0; }
+  50%, 74.99% { opacity: 1; }
+  75%, 100% { opacity: 0; }
 }
 @keyframes dots-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @keyframes dots-down { from { transform: translateY(-50%); } to { transform: translateY(0); } }
