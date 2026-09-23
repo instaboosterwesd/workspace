@@ -484,17 +484,22 @@ function AviatorGame() {
     return liveBets;
   }, [liveBets, phase, roundProgress]);
 
-  // Keep the plane on the same endpoint that drives the curve, fill, and multiplier.
+  // Keep the plane on the live flight endpoint; the red line gets its own small
+  // lower-left correction so the aircraft itself never shifts.
   const curveEnd = useMemo(() => endpointStateAt(flight, crashAt), [flight, crashAt]);
+  const lineEnd = useMemo(() => ({
+    x: curveEnd.x - 0.55,
+    y: curveEnd.y + 0.85,
+  }), [curveEnd]);
   const curve = useMemo(() => {
     const { startControl, endControl } = curveControlsAt(flight, crashAt);
     return [
       `M ${graphStartX.toFixed(2)} ${graphBaselineY.toFixed(2)}`,
       `C ${startControl.x.toFixed(2)} ${startControl.y.toFixed(2)}`,
       `${endControl.x.toFixed(2)} ${endControl.y.toFixed(2)}`,
-      `${curveEnd.x.toFixed(2)} ${curveEnd.y.toFixed(2)}`,
+      `${lineEnd.x.toFixed(2)} ${lineEnd.y.toFixed(2)}`,
     ].join(" ");
-  }, [flight, crashAt]);
+  }, [flight, crashAt, lineEnd]);
 
   if (!loaded) return <LoadingScreen progress={progress} />;
 
@@ -597,7 +602,7 @@ function AviatorGame() {
                   <feGaussianBlur stdDeviation="1.7" />
                 </filter>
               </defs>
-              <path d={`${curve} L ${curveEnd.x.toFixed(2)} ${graphBaselineY.toFixed(2)} L ${graphStartX.toFixed(2)} ${graphBaselineY.toFixed(2)} Z`} fill="url(#flightFill)" />
+              <path d={`${curve} L ${lineEnd.x.toFixed(2)} ${graphBaselineY.toFixed(2)} L ${graphStartX.toFixed(2)} ${graphBaselineY.toFixed(2)} Z`} fill="url(#flightFill)" />
               <path d={curve} fill="none" stroke="var(--plane-red)" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" opacity="0.28" filter="url(#flightStrokeOuterGlow)" vectorEffect="non-scaling-stroke" />
               <path d={curve} fill="none" stroke="var(--plane-red)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" opacity="0.5" vectorEffect="non-scaling-stroke" />
               <path d={curve} fill="none" stroke="var(--plane-red)" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
