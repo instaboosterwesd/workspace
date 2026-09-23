@@ -1,0 +1,388 @@
+# FINAL GRAPH LINE MATCH — THICKNESS + BRIGHT RED CORE + GLOW
+
+I have provided TWO reference images.
+
+* **IMAGE 1 = MY CURRENT WEBSITE**
+* **IMAGE 2 = REAL / REFERENCE WEBSITE**
+
+Compare both images carefully before making any change.
+
+My current implementation already has the correct general red color and some glow, but the graph line is STILL TOO THIN compared with the REAL reference.
+
+I need the graph line to visually match Image 2 as closely as possible.
+
+DO NOT redesign the graph.
+
+DO NOT change the graph trajectory, curve shape, graph position, box size, fill area, airplane, multiplier, background, or layout.
+
+ONLY FIX THE GRAPH STROKE APPEARANCE.
+
+---
+
+## 1. MAIN PROBLEM
+
+Current implementation:
+
+* Red color is approximately correct.
+* Glow exists.
+* BUT the actual red graph stroke is too thin.
+* The luminous red line does not have enough visual weight.
+* It looks like a thin red/pink line with a small glow.
+
+Reference implementation:
+
+* The actual red core line is visibly thicker.
+* The core is bright, saturated red.
+* There is a strong but controlled red luminous halo around it.
+* The line remains sharp in the center while glowing softly around the outside.
+* The graph therefore looks more substantial and brighter.
+
+I need EXACTLY this visual treatment.
+
+---
+
+# 2. DO NOT ONLY INCREASE GLOW
+
+This is extremely important.
+
+DO NOT solve this by only increasing:
+
+```css
+box-shadow
+filter: blur()
+drop-shadow()
+```
+
+That will make the line blurry without making the actual graph stroke thicker.
+
+Instead, increase the ACTUAL GRAPH STROKE WIDTH first.
+
+Then add the glow separately.
+
+Required visual structure:
+
+```text
+        soft red outer glow
+      ┌────────────────────┐
+      │   bright red halo  │
+      │    ███████████     │
+      │    SOLID RED CORE  │
+      │    ███████████     │
+      └────────────────────┘
+```
+
+The center of the line must remain crisp.
+
+---
+
+# 3. RECOMMENDED STROKE STRUCTURE
+
+If using SVG, Canvas, or another vector rendering system, use two or three visual layers based on the SAME exact graph path.
+
+### Layer 1 — OUTER GLOW
+
+Use the same graph path.
+
+Approximate:
+
+```text
+stroke: #FF1F1F
+stroke-width: 8–12px
+opacity: 0.20–0.35
+blur: subtle
+```
+
+This creates the soft red luminous halo.
+
+---
+
+### Layer 2 — INNER GLOW
+
+Use the same path again.
+
+Approximate:
+
+```text
+stroke: #FF1A1A
+stroke-width: 5–7px
+opacity: 0.35–0.60
+```
+
+Keep this relatively sharp.
+
+---
+
+### Layer 3 — SOLID CORE
+
+This is the most important layer.
+
+Use:
+
+```text
+stroke: #FF1A1A
+stroke-width: approximately 3–4px
+opacity: 1
+```
+
+The exact width should be tuned visually against Image 2.
+
+The core must be:
+
+* solid
+* saturated
+* bright
+* sharp
+* continuous
+* anti-aliased
+
+Do NOT make the core transparent.
+
+---
+
+# 4. VISUAL TARGET
+
+The final graph should look approximately like:
+
+```text
+              SOFT RED GLOW
+          ░░░░░░████████░░░░░░
+             ███████████
+             ███████████
+             ███████████
+              SOFT GLOW
+```
+
+Not like:
+
+```text
+-----------------
+tiny 1px red line
+-----------------
+```
+
+And NOT like:
+
+```text
+████████████████
+huge blurry red glow
+████████████████
+```
+
+The desired result is:
+
+**THICK CRISP CORE + CONTROLLED LUMINOUS RED GLOW**
+
+---
+
+# 5. COLOR
+
+Use a strong saturated red close to:
+
+### Core:
+
+`#FF1A1A`
+
+or:
+
+`#FF2020`
+
+The core must NOT become pink.
+
+Avoid:
+
+* magenta
+* hot pink
+* orange-red
+* dark red
+
+The visual target is a bright arcade/casino-style red similar to the reference.
+
+If possible, sample the exact red from Image 2 rather than guessing.
+
+---
+
+# 6. LINE THICKNESS
+
+The current graph is visibly thinner than the real reference.
+
+Increase the actual core stroke width enough that the line has the same visual weight as Image 2.
+
+Start around:
+
+```text
+Core: 3–4 px
+Inner glow: 5–7 px
+Outer glow: 8–12 px
+```
+
+Then compare at the actual browser/display resolution.
+
+Do NOT blindly use an extremely large stroke.
+
+The objective is to match Image 2, not to make the graph unnecessarily thick.
+
+---
+
+# 7. KEEP THE GRAPH PATH EXACTLY THE SAME
+
+Do NOT modify:
+
+* curve trajectory
+* curve control points
+* endpoint position
+* graph scale
+* graph angle
+* graph animation
+* 1.70x target
+* 2.00x target
+
+Only change the rendering/stroke appearance.
+
+The centerline of the graph must remain exactly where it currently is.
+
+This is a visual stroke-width correction, NOT a geometry correction.
+
+---
+
+# 8. KEEP THE RED FILL SEPARATE
+
+Do not increase the opacity or thickness of the large red filled area just to make the graph look thicker.
+
+The graph stroke and graph fill are separate visual elements.
+
+Only the graph stroke/glow should be changed.
+
+The existing translucent red fill should remain visually similar to the reference.
+
+---
+
+# 9. ANTI-ALIASING / HIGH-DPI
+
+Make sure the line is rendered at high quality.
+
+If using Canvas:
+
+* account for `devicePixelRatio`
+* render at the correct internal resolution
+* scale the context correctly
+* use smooth anti-aliasing
+* avoid blurry 1px alignment problems
+
+If using SVG:
+
+* use a proper vector path
+* use rounded/smooth line joins where appropriate
+* avoid rendering the graph as a low-resolution bitmap.
+
+The final line should remain sharp even when viewed at normal desktop resolution.
+
+---
+
+# 10. NO DOTTED / SEGMENTED APPEARANCE
+
+The final graph must be one continuous red line.
+
+There must be NO:
+
+* yellow dots
+* white dots
+* dashed stroke
+* segmented stroke
+* gaps
+* flickering
+* broken glow
+* visible path sampling points
+
+The yellow dots from previous reference images are ONLY guide points and must never appear in the final graph.
+
+---
+
+# 11. MATCH IMAGE 2, NOT IMAGE 1
+
+Use the REAL WEBSITE screenshot (Image 2) as the visual authority.
+
+Place the current implementation and reference side-by-side mentally/pixel-wise and compare:
+
+### Compare:
+
+1. Core stroke thickness
+2. Core brightness
+3. Outer glow radius
+4. Glow opacity
+5. Red saturation
+6. Edge sharpness
+7. Visual line weight
+
+Keep adjusting ONLY these properties until the graph visually matches the real reference.
+
+---
+
+# 12. FINAL REQUIRED RESULT
+
+The final graph should have:
+
+**Bright saturated red core**
++
+**noticeably thicker stroke**
++
+**soft red outer glow**
++
+**sharp centerline**
++
+**smooth anti-aliased edges**
+
+The result should visually resemble the REAL reference image:
+
+> thick bright red graph line with a luminous red halo
+
+NOT:
+
+> thin red line with a weak glow.
+
+---
+
+# 13. FINAL VALIDATION CHECKLIST
+
+Before finishing, verify:
+
+[ ] Actual graph stroke is visibly thicker than current implementation.
+
+[ ] Core line is solid bright red.
+
+[ ] Core is sharp, not blurry.
+
+[ ] Outer red glow is clearly visible.
+
+[ ] Glow is soft and controlled.
+
+[ ] Glow does not overpower the core.
+
+[ ] Line is continuous.
+
+[ ] No dots or dashed appearance.
+
+[ ] No pixelation.
+
+[ ] No jagged edges.
+
+[ ] Graph trajectory is unchanged.
+
+[ ] Graph endpoint is unchanged.
+
+[ ] Red fill is unchanged.
+
+[ ] Airplane is unchanged.
+
+[ ] Multiplier is unchanged.
+
+[ ] Background is unchanged.
+
+[ ] Overall layout is unchanged.
+
+MOST IMPORTANT:
+
+DO NOT JUST MAKE THE GLOW BIGGER.
+
+MAKE THE ACTUAL RED GRAPH STROKE THICKER FIRST, THEN BUILD A SOFT RED GLOW AROUND THAT SAME PATH.
+
+The final visual target is the REAL WEBSITE screenshot (Image 2).
