@@ -169,8 +169,17 @@ function curvePointAt(sampleProgress: number, currentProgress: number, crashAt: 
 
 type LiveBet = { id: string; name: string; avatar: number; amount: number; cashAt: number | null };
 
+function pickBotCashout() {
+  const roll = Math.random();
+  if (roll < 0.18) return null;
+  if (roll < 0.44) return Number((1.05 + Math.random() * 0.94).toFixed(2));
+  if (roll < 0.74) return Number((2 + Math.random() * 7.99).toFixed(2));
+  if (roll < 0.96) return Number((10 + Math.random() * 14.99).toFixed(2));
+  return Number((25 + Math.random() * 14.5).toFixed(2));
+}
+
 function makeRoundBets(seed: number): LiveBet[] {
-  const count = 26;
+  const count = 40;
   const list: LiveBet[] = [];
   for (let i = 0; i < count; i += 1) {
     const amount = Math.round((300 + Math.random() * 7700) / 100) * 100;
@@ -179,9 +188,12 @@ function makeRoundBets(seed: number): LiveBet[] {
       name: `1***${Math.floor(Math.random() * 10)}`,
       avatar: Math.floor(Math.random() * 12),
       amount,
-      cashAt: Math.random() < 0.45 ? Number((1.05 + Math.random() * 1.75).toFixed(2)) : null,
+      cashAt: pickBotCashout(),
     });
   }
+  [10, 15, 25, 35].forEach((cashAt, index) => {
+    if (list[index]) list[index].cashAt = cashAt;
+  });
   return list.sort((a, b) => b.amount - a.amount);
 }
 
@@ -562,10 +574,10 @@ function AviatorGame() {
     setTotalBets(1100 + Math.floor(Math.random() * 700));
   }, [round, loaded]);
 
-  // Fill the list with 20 bets immediately, then add the remaining bets one at a time before takeoff.
+  // Fill the list with 24 bets immediately, then add the remaining bets one at a time before takeoff.
   const visibleBets = useMemo(() => {
     if (phase === "intro") {
-      const initialCount = Math.min(20, liveBets.length);
+      const initialCount = Math.min(24, liveBets.length);
       const remainingCount = liveBets.length - initialCount;
       const count = initialCount + Math.floor(roundProgress * remainingCount);
       return liveBets.slice(0, count);
