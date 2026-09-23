@@ -41,7 +41,7 @@ const planeFrames = [planeFrameSmall, planeFrameMedium, planeFrameBig];
 const planeFrameNames = ["small", "medium", "big"] as const;
 const maxMultiplier = 40;
 const flightDurationMs = 45000;
-const curveHorizontalExponent = 16;
+const curveProgressExponent = 1.18;
 const curveRiseExponent = 1.7;
 const graphStartX = 4;
 const graphBaselineY = 95;
@@ -89,7 +89,7 @@ function endpointStateAt(progress: number, crashAt: number): EndpointState {
 
   if (safeProgress <= upperProgress) {
     const riseProgress = upperProgress > 0 ? safeProgress / upperProgress : 1;
-    const horizontalProgress = 1 - Math.pow(1 - riseProgress, curveHorizontalExponent);
+    const horizontalProgress = Math.pow(riseProgress, curveProgressExponent);
     const upwardProgress = Math.pow(horizontalProgress, curveRiseExponent);
 
     return {
@@ -138,10 +138,10 @@ function curvePointAt(sampleProgress: number, currentProgress: number, crashAt: 
   const endpoint = endpointStateAt(currentProgress, crashAt);
   const endpointWidth = endpoint.x - graphStartX;
   const startControl = {
-    x: graphStartX + endpointWidth * 0.2,
+    x: graphStartX + endpointWidth * 0.28,
     y: graphBaselineY,
   };
-  const endControlDistance = endpointWidth * 0.16;
+  const endControlDistance = endpointWidth * 0.18;
   const endControl = {
     x: endpoint.x - endControlDistance,
     y: endpoint.y - endpoint.tangentSlope * endControlDistance,

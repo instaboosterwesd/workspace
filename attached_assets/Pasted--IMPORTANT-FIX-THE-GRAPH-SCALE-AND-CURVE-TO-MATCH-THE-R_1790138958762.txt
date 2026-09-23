@@ -1,0 +1,485 @@
+# IMPORTANT — FIX THE GRAPH SCALE AND CURVE TO MATCH THE REFERENCE
+
+I have provided:
+
+1. The original/reference graph screenshots.
+2. The current implementation screenshot.
+3. The reference images showing the correct graph scale and trajectory.
+
+Your current graph implementation is NOT matching the reference.
+
+Do NOT redesign the UI.
+
+Do NOT change the background, airplane, multiplier typography, red color, graph fill, layout, or overall visual style.
+
+ONLY FIX THE GRAPH'S:
+
+* scale
+* curvature
+* slope
+* endpoint position
+* endpoint height
+* trajectory
+* 1.70x target position
+* 2.00x target position
+* animation progression
+
+---
+
+# 1. THE MAIN PROBLEM
+
+The current implementation makes the graph look too low / too wide / incorrectly scaled compared with the reference.
+
+The current graph is spreading across the screen with a different curvature than the reference.
+
+The reference graph has a much more controlled, smooth, upward-curving trajectory.
+
+The graph must NOT look like a simple generic exponential curve that fills the entire available area.
+
+It must reproduce the specific visual trajectory shown in the reference images.
+
+---
+
+# 2. USE THE YELLOW DOTS AS THE TRAJECTORY SCALE
+
+In the reference image, the yellow dots represent the intended graph trajectory.
+
+Treat those yellow dots as invisible control/reference points.
+
+They are NOT part of the final UI.
+
+The actual red graph must smoothly follow the same trajectory represented by those dots.
+
+IMPORTANT:
+
+DO NOT connect the yellow dots using straight lines.
+
+Instead, construct ONE continuous smooth Bézier/spline curve through the approximate trajectory.
+
+The curve should visually pass through the yellow-dot path.
+
+After implementation, hide all yellow dots.
+
+---
+
+# 3. STARTING POINT
+
+The graph must begin near the same bottom-left position as the reference.
+
+The beginning should be:
+
+* almost horizontal,
+* very shallow,
+* smooth,
+* gradually increasing in slope.
+
+Do NOT make the graph immediately rise steeply.
+
+The first portion should stay close to the bottom baseline.
+
+The graph should gradually bend upward.
+
+---
+
+# 4. 1.70x MUST BE THE HIGHER TOUCH POINT
+
+This is extremely important.
+
+When the multiplier reaches approximately:
+
+1.70x
+
+the graph endpoint must reach the HIGHER reference position.
+
+The airplane must be sitting at that exact graph endpoint.
+
+The red fill must terminate at exactly the same X coordinate.
+
+The endpoint should visually look like the upper target shown in my reference.
+
+Do NOT place the 1.70x endpoint too low.
+
+Do NOT let 1.70x end somewhere in the middle of the graph.
+
+1.70x = HIGHER TARGET.
+
+---
+
+# 5. 2.00x MUST BE THE LOWER TARGET
+
+When the multiplier reaches approximately:
+
+2.00x
+
+the endpoint must be positioned LOWER than the 1.70x target.
+
+This is intentional.
+
+The two target states are NOT at the same height.
+
+Visual relationship:
+
+```
+          1.70x
+            ●
+           /
+          /
+         /
+        /
+       /
+      ●
+    2.00x
+```
+
+The 1.70x endpoint is HIGHER.
+
+The 2.00x endpoint is LOWER.
+
+Do not invert these positions.
+
+---
+
+# 6. DO NOT USE THE WHOLE SCREEN AS THE GRAPH SCALE
+
+This is another critical correction.
+
+The graph should be contained within the same visual plotting region as the reference.
+
+Do not stretch the graph until it touches arbitrary screen edges.
+
+The effective graph area should preserve the proportions seen in the reference.
+
+Use the existing graph box/container dimensions as the base coordinate system.
+
+The curve endpoint should be positioned relative to that graph box, NOT relative to the entire browser viewport.
+
+---
+
+# 7. REFERENCE GEOMETRY
+
+The reference video/frame was approximately:
+
+1394 × 644 px.
+
+Approximate graph start:
+
+X ≈ 42
+Y ≈ 574
+
+Reference upper 1.70x state:
+
+X ≈ 1074
+Y ≈ 110
+
+Reference lower 2.00x state:
+
+X ≈ 1222
+Y ≈ 184
+
+These are reference measurements.
+
+Do NOT blindly hard-code these numbers if the application uses a responsive graph container.
+
+Instead, normalize them relative to the graph plotting box.
+
+The visual proportions are more important than absolute pixel values.
+
+---
+
+# 8. RELATIVE TARGET POSITIONS
+
+Relative to the graph start:
+
+### 1.70x
+
+Horizontal travel:
+
+approximately 1032 px
+
+Vertical rise:
+
+approximately 464 px
+
+Target:
+
+approximately:
+
+(1074, 110)
+
+This is the HIGHER target.
+
+---
+
+### 2.00x
+
+Horizontal travel:
+
+approximately 1180 px
+
+Vertical rise:
+
+approximately 390 px
+
+Target:
+
+approximately:
+
+(1222, 184)
+
+This is the LOWER target.
+
+Therefore:
+
+1.70x:
+HIGHER
+
+2.00x:
+LOWER
+
+---
+
+# 9. CURVE ANGLE
+
+The endpoint slope also needs to match the reference.
+
+At approximately 1.70x:
+
+endpoint tangent ≈ 39–40° upward.
+
+At approximately 2.00x:
+
+endpoint tangent ≈ 30–32° upward.
+
+In screen coordinates, Y decreases as the graph rises.
+
+Therefore the curve should visually become less steep toward the 2.00x endpoint.
+
+Do NOT use one constant straight slope.
+
+Do NOT use a straight diagonal line.
+
+Do NOT make the entire graph have the same angle.
+
+---
+
+# 10. REQUIRED CURVE SHAPE
+
+The desired shape is:
+
+START
+
+---
+
+```
+             \
+              \
+               \
+                )
+               )
+             )
+          )
+       )
+   )
+)
+```
+
+●
+
+Conceptually:
+
+* nearly flat at start,
+* gradually bends upward,
+* continuously accelerates,
+* reaches the high 1.70x target,
+* then transitions to the lower 2.00x target state.
+
+The actual curve must remain smooth.
+
+No corners.
+
+No kinks.
+
+No sudden changes in slope.
+
+---
+
+# 11. RED FILLED AREA
+
+The red translucent filled area must be generated directly from the same curve.
+
+Do NOT independently animate the fill.
+
+The fill must always follow the graph.
+
+At every frame:
+
+# CURRENT CURVE ENDPOINT
+
+# CURRENT FILL RIGHT EDGE
+
+AIRPLANE ANCHOR POINT
+
+These three must always remain synchronized.
+
+---
+
+# 12. AIRPLANE
+
+The airplane must follow the curve endpoint.
+
+Do NOT independently animate the airplane.
+
+The graph endpoint should be the source of truth.
+
+For every animation frame:
+
+airplaneX = curveEndpointX
+
+airplaneY = curveEndpointY
+
+with the same visual offset used by the original reference.
+
+The airplane must never float above/below the graph.
+
+---
+
+# 13. MULTIPLIER
+
+The multiplier must also be synchronized with graph progress.
+
+Do not randomly change the number.
+
+The displayed multiplier should correspond to the current animation state.
+
+At the upper target:
+
+approximately 1.70x
+
+At the lower target:
+
+approximately 2.00x
+
+The number should transition smoothly.
+
+---
+
+# 14. REPEATING MOVEMENT
+
+After reaching the 1.70x upper target:
+
+smoothly transition toward the 2.00x lower target.
+
+Then smoothly return toward the 1.70x upper target.
+
+Then repeat.
+
+Required behavior:
+
+1. Start
+2. Curve rises smoothly
+3. Reach HIGH 1.70x
+4. Touch/hold briefly
+5. Move smoothly toward LOWER 2.00x
+6. Touch/hold briefly
+7. Move smoothly back toward HIGH 1.70x
+8. Repeat indefinitely
+
+Do NOT move the entire graph container up and down.
+
+Only the curve geometry/end position should change.
+
+---
+
+# 15. MOST IMPORTANT DIFFERENCE FROM THE CURRENT VERSION
+
+Compare the current screenshot against the reference screenshots.
+
+The current version looks like the graph is using a generic large-scale curve.
+
+FIX THIS.
+
+The reference has a specific controlled scale:
+
+* lower starting section,
+* gradual rise,
+* controlled curvature,
+* high 1.70x endpoint,
+* lower 2.00x endpoint,
+* consistent graph box,
+* consistent endpoint X positions.
+
+The graph must visually feel like the same graph from the reference, NOT a newly designed graph.
+
+---
+
+# 16. DO NOT CHANGE THESE
+
+DO NOT change:
+
+* background
+* background rays
+* gradient
+* red color
+* red fill opacity
+* airplane artwork
+* airplane size
+* multiplier font
+* multiplier size
+* multiplier position
+* graph box border
+* bottom markers
+* left-side markers
+* overall dimensions
+* UI layout
+
+Only correct the graph trajectory, scale, slope, endpoint positions and animation logic.
+
+---
+
+# 17. FINAL VALIDATION
+
+Before considering the task complete, compare the result against all supplied reference images.
+
+Verify:
+
+[ ] Graph starts at the same baseline region.
+
+[ ] Starting section is shallow.
+
+[ ] Curve smoothly follows the yellow-dot trajectory.
+
+[ ] Yellow dots are hidden in the final result.
+
+[ ] Graph is NOT a straight line.
+
+[ ] Graph is NOT excessively stretched across the screen.
+
+[ ] 1.70x reaches the HIGHER target.
+
+[ ] 2.00x reaches the LOWER target.
+
+[ ] 1.70x and 2.00x have visibly different Y positions.
+
+[ ] Endpoint slope matches the reference.
+
+[ ] Red fill follows the curve exactly.
+
+[ ] Airplane follows the endpoint exactly.
+
+[ ] Multiplier remains synchronized.
+
+[ ] No snapping.
+
+[ ] No jumping.
+
+[ ] No sudden graph reset.
+
+[ ] No independent airplane movement.
+
+[ ] No independent fill movement.
+
+[ ] The complete animation looks visually consistent with the original reference.
+
+THE PRIORITY IS NOT TO CREATE A BEAUTIFUL NEW GRAPH.
+
+THE PRIORITY IS TO MATCH THE PROVIDED REFERENCE GRAPH'S SCALE, CURVATURE, ANGLE, ENDPOINT POSITION, AND VISUAL BEHAVIOR AS CLOSELY AS POSSIBLE.
