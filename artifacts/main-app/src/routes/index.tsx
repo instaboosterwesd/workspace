@@ -488,8 +488,8 @@ function AviatorGame() {
   // lower-left correction so the aircraft itself never shifts.
   const curveEnd = useMemo(() => endpointStateAt(flight, crashAt), [flight, crashAt]);
   const lineEnd = useMemo(() => ({
-    x: curveEnd.x + 0.35,
-    y: curveEnd.y + 1.35,
+    x: curveEnd.x + 0.75,
+    y: curveEnd.y + 2.25,
   }), [curveEnd]);
   const curve = useMemo(() => {
     const { startControl, endControl } = curveControlsAt(flight, crashAt);
