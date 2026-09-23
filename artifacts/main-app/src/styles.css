@@ -87,14 +87,16 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .menu-switch.on b { transform: translateX(17px); background: var(--foreground); }
 .menu-divider { height: 20px; background: oklch(0.18 0.01 260); }
 .menu-link { height: 45px; gap: 10px; padding: 0 12px; border-top: 1px solid oklch(0.22 0.01 260); font-size: 14px; }
-.cashout-notice { position: absolute; top: 35px; left: 50%; z-index: 12; display: flex; align-items: center; gap: 10px; min-width: min(355px, calc(100vw - 24px)); padding: 6px 10px 6px 14px; border: 1px solid oklch(0.58 0.18 135); border-radius: 22px; background: oklch(0.31 0.16 135); box-shadow: 0 8px 22px oklch(0 0 0 / .42); transform: translateX(-50%); animation: cashout-pop .24s ease-out both; }
-.cashout-copy { color: oklch(0.96 0.03 135); font-size: 11px; line-height: 12px; text-align: center; white-space: nowrap; }
-.cashout-win { display: flex; align-items: center; gap: 7px; min-width: 128px; padding: 5px 12px; border-radius: 17px; background: var(--game-green); color: oklch(0.98 0 0); }
-.cashout-win strong { font-size: 11px; font-weight: 700; }
-.cashout-win b { font-size: 14px; font-weight: 800; }
-.cashout-multiplier { color: oklch(0.96 0.04 135); font-size: 13px; font-weight: 800; white-space: nowrap; }
-.cashout-notice > button { width: 20px; height: 20px; margin-left: auto; border-radius: 50%; background: transparent; color: oklch(0.82 0.08 135); font-size: 18px; line-height: 1; }
-.cashout-notice > button:hover { background: oklch(0.4 0.13 135); color: var(--foreground); }
+.cashout-notice { position: absolute; top: 35px; left: 50%; z-index: 12; display: flex; align-items: center; gap: 3px; width: min(312px, calc(100vw - 24px)); min-height: 60px; padding: 5px 8px 5px 10px; border: 1px solid oklch(0.46 0.13 135); border-radius: 31px; background: oklch(0.23 0.12 135); box-shadow: 0 8px 22px oklch(0 0 0 / .44), inset 0 1px 0 oklch(0.82 0.14 135 / .12); transform: translateX(-50%); animation: cashout-pop .24s ease-out both; }
+.cashout-summary { flex: 1 1 128px; min-width: 106px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
+.cashout-copy { color: oklch(0.68 0.01 135); font-size: 11px; line-height: 12px; text-align: center; white-space: nowrap; }
+.cashout-win { position: relative; flex: 0 0 126px; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 46px; padding: 3px 10px 3px 18px; overflow: hidden; border-radius: 24px; background: radial-gradient(circle at 44% 42%, oklch(0.76 0.22 136), oklch(0.63 0.22 136) 72%); color: oklch(0.98 0 0); box-shadow: inset 0 0 0 1px oklch(0.86 0.18 135 / .38), 0 0 12px oklch(0.67 0.22 136 / .22); }
+.cashout-win-mark { position: absolute; left: 8px; top: 50%; color: oklch(0.45 0.15 136 / .46); font-size: 25px; line-height: 1; transform: translateY(-52%) rotate(12deg); }
+.cashout-win strong { position: relative; z-index: 1; font-size: 11px; line-height: 12px; font-weight: 700; }
+.cashout-win b { position: relative; z-index: 1; font-size: 20px; line-height: 20px; font-weight: 800; }
+.cashout-multiplier { color: oklch(0.96 0.01 135); font-size: 19px; line-height: 20px; font-weight: 800; white-space: nowrap; }
+.cashout-notice > button { flex: 0 0 27px; width: 27px; height: 27px; margin-left: auto; border-radius: 50%; background: transparent; color: oklch(0.58 0.04 135); font-size: 26px; font-weight: 300; line-height: 22px; }
+.cashout-notice > button:hover { background: oklch(0.36 0.12 135); color: var(--foreground); }
 
 .game-layout { height: calc(100dvh - 32px); display: grid; grid-template-columns: 27% 1fr; grid-template-rows: minmax(0, 1fr); gap: 4px; padding-top: 2px; overflow: hidden; }
 .bets-sidebar { min-width: 0; min-height: 0; display: flex; flex-direction: column; background: var(--game-panel); overflow: hidden; }
