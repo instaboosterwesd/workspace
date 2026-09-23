@@ -316,8 +316,6 @@ function AviatorGame() {
   // The source graph sits just above the white x-axis dots. Keep its start
   // aligned with the blue y-axis and let the plane travel on the line.
   const curveEnd = useMemo(() => ({ x: 4 + flight * 77, y: 95 - flight * 77 }), [flight]);
-  const fanFrame = fanFrames[fanFrameIndex % fanFrames.length] ?? "/aviator/fan-frame-1.svg";
-
   const curve = useMemo(() => {
     const { x: endX, y: endY } = curveEnd;
     const graphBase = 95;
@@ -445,7 +443,14 @@ function AviatorGame() {
                 <img className="official-badge" src={officialAsset.url} alt="Spribe official game" />
                 <div className="intro-plane-holder" aria-hidden="true">
                   <img className="intro-plane" src={planeBody} alt="" />
-                  <img key={fanFrame} className="intro-fan" src={fanFrame} alt="" />
+                  {fanFrames.map((frame, index) => (
+                    <img
+                      className={index === fanFrameIndex ? "intro-fan active" : "intro-fan"}
+                      key={frame}
+                      src={frame}
+                      alt=""
+                    />
+                  ))}
                 </div>
               </div>
             ) : (
@@ -453,7 +458,15 @@ function AviatorGame() {
                 {phase === "flying" && (
                   <div className="plane-holder" style={{ left: `${curveEnd.x}%`, bottom: `${100 - curveEnd.y}%` }}>
                     <img className="flight-plane" src={planeBody} alt="Flying airplane" />
-                    <img key={fanFrame} className="flight-fan" src={fanFrame} alt="" aria-hidden="true" />
+                    {fanFrames.map((frame, index) => (
+                      <img
+                        className={index === fanFrameIndex ? "flight-fan active" : "flight-fan"}
+                        key={frame}
+                        src={frame}
+                        alt=""
+                        aria-hidden="true"
+                      />
+                    ))}
                   </div>
                 )}
                 <div className={`multiplier ${phase === "crashed" ? "crashed" : ""}`}>

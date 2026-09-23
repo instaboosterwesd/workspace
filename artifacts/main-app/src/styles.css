@@ -159,7 +159,8 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .flight-curve.is-hidden { opacity: 0; }
 .plane-holder { position: absolute; z-index: 2; width: clamp(92px, 10vw, 148px); aspect-ratio: 150 / 74; transform: translate(-6%, 18%); transition: left 80ms linear, bottom 80ms linear; }
 .flight-plane, .flight-fan { position: absolute; inset: 0; display: block; width: 100%; height: auto; }
-.flight-fan { pointer-events: none; }
+.flight-fan { visibility: hidden; opacity: 0; pointer-events: none; }
+.flight-fan.active { visibility: visible; opacity: 1; }
 .multiplier { position: absolute; z-index: 3; inset: 42% 0 auto; text-align: center; font-size: clamp(52px, 6.5vw, 100px); font-weight: 800; line-height: 1; }
 .multiplier small { display: block; margin-bottom: 8px; color: #fff; font-size: clamp(17px, 2vw, 29px); }
 .multiplier.crashed { color: var(--game-red); font-size: clamp(58px, 8vw, 100px); animation: crash-text .28s ease-out both; }
@@ -172,7 +173,8 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .official-badge { width: min(106px, 15%); height: auto; margin-top: 12px; }
 .intro-plane-holder { position: absolute; left: 2%; bottom: 8%; width: clamp(80px, 9vw, 130px); aspect-ratio: 150 / 74; }
 .intro-plane, .intro-fan { position: absolute; inset: 0; display: block; width: 100%; height: auto; }
-.intro-fan { pointer-events: none; }
+.intro-fan { visibility: hidden; opacity: 0; pointer-events: none; }
+.intro-fan.active { visibility: visible; opacity: 1; }
 
 @keyframes rays-spin {
   from { transform: translate(-50%, 50%) rotate(0deg); }
