@@ -781,9 +781,9 @@ function AviatorGame() {
                   ? "plane-holder intro-position"
                   : phase === "flying"
                     ? "plane-holder flight-position"
-                    : "plane-holder is-hidden"
+                      : "plane-holder flight-position crashing"
               }
-              style={phase === "flying" ? { left: `${curveEnd.x}%`, bottom: `${100 - curveEnd.y}%` } : undefined}
+                style={phase !== "intro" ? { left: `${curveEnd.x}%`, bottom: `${100 - curveEnd.y}%` } : undefined}
             >
               <PlaneAnimation animationOn={animationOn} {...(phase === "flying" ? { label: "Flying airplane" } : {})} />
             </div>

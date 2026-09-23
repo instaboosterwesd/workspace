@@ -225,9 +225,8 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
   100% { transform: translateX(0); }
 }
 @keyframes plane-crash {
-  0% { transform: translate(-6%, 18%) rotate(0deg) scale(1); opacity: 1; }
-  40% { transform: translate(14%, 20%) rotate(-8deg) scale(1.04); opacity: 1; }
-  100% { transform: translate(148%, -170%) rotate(-24deg) scale(.72); opacity: 0; }
+  0%, 82% { transform: translate(-7%, 15%) rotate(0deg) scale(1); opacity: 1; }
+  100% { transform: translate(360%, 15%) rotate(0deg) scale(1); opacity: 0; }
 }
 @keyframes crash-text {
   0% { transform: scale(.88); opacity: .25; }
