@@ -42,6 +42,19 @@ const planeFrames = [propellerFrame1.url, propellerFrame2.url, propellerFrame3.u
 
 type LiveBet = { id: string; name: string; avatar: number; amount: number; cashAt: number | null };
 
+function pickCrashMultiplier() {
+  const roll = Math.random();
+  if (roll < 0.55) return Number((1.1 + Math.random() * 2.4).toFixed(2));
+  if (roll < 0.84) return Number((3.5 + Math.random() * 6.5).toFixed(2));
+  if (roll < 0.94) return [10, 12.5, 15, 18, 20, 25][Math.floor(Math.random() * 6)] ?? 10;
+  if (roll < 0.99) return [25, 32, 40, 50, 75, 100, 250][Math.floor(Math.random() * 7)] ?? 25;
+  return 1000;
+}
+
+function getFlightDuration(target: number) {
+  return 11000 + Math.min(22000, Math.log10(target) * 7000);
+}
+
 function makeRoundBets(seed: number): LiveBet[] {
   const count = 26;
   const list: LiveBet[] = [];
@@ -258,17 +271,34 @@ function AviatorGame() {
 
   useEffect(() => {
     if (!loaded) return;
-    const started = Date.now();
-    // The recordings use a short partner/countdown screen, then a roughly
-    // ten-second flight before the graph locks and the round ends.
     const introDuration = 3100;
-    const flightDuration = 10000;
     const crashDuration = 1700;
-    const roundDuration = introDuration + flightDuration + crashDuration;
+    let roundStartedAt = Date.now();
+    let roundIndex = 0;
+    let targetMultiplier = pickCrashMultiplier();
+    let flightDuration = getFlightDuration(targetMultiplier);
+
+    const beginNextRound = (startedAt: number) => {
+      roundStartedAt = startedAt;
+      roundIndex += 1;
+      targetMultiplier = pickCrashMultiplier();
+      flightDuration = getFlightDuration(targetMultiplier);
+      setRound(3325559 + roundIndex);
+      setPhase("intro");
+      setFlight(0);
+      setRoundProgress(0);
+      setMultiplier(1);
+    };
+
     const timer = window.setInterval(() => {
-      const totalElapsed = Date.now() - started;
-      const elapsed = totalElapsed % roundDuration;
-      setRound(3325559 + Math.floor(totalElapsed / roundDuration));
+      const now = Date.now();
+      const elapsed = now - roundStartedAt;
+      const roundDuration = introDuration + flightDuration + crashDuration;
+
+      if (elapsed >= roundDuration) {
+        beginNextRound(now);
+        return;
+      }
 
       if (elapsed < introDuration) {
         setPhase("intro");
@@ -276,16 +306,16 @@ function AviatorGame() {
         setRoundProgress(elapsed / introDuration);
         setMultiplier(1);
       } else if (elapsed < introDuration + flightDuration) {
-        const flightElapsed = (elapsed - introDuration) / 1000;
+        const flightProgress = Math.min(1, (elapsed - introDuration) / flightDuration);
         setPhase("flying");
-        setFlight(Math.min(flightElapsed / 10, 1));
+        setFlight(flightProgress);
         setRoundProgress(1);
-        setMultiplier(Number((1 + flightElapsed * 0.042 + flightElapsed * flightElapsed * 0.0034).toFixed(2)));
+        setMultiplier(Number(Math.pow(targetMultiplier, flightProgress).toFixed(2)));
       } else {
         setPhase("crashed");
         setFlight(1);
         setRoundProgress(1);
-        setMultiplier(2.95);
+        setMultiplier(targetMultiplier);
       }
     }, 50);
     return () => window.clearInterval(timer);
@@ -331,9 +361,11 @@ function AviatorGame() {
     for (let i = 0; i <= steps; i += 1) {
       const t = i / steps;
       const x = 4 + span * t;
-      // Keep the line attached to the plane and steadily steepen it. The
-      // source animation leaves the path behind instead of wobbling it.
-      const base = graphBase - rise * Math.pow(t, 2.25);
+      // Keep the path attached to the plane while adding gentle, smooth
+      // down/up waves that fade at both endpoints.
+      const riseAtPoint = rise * Math.pow(t, 1.45);
+      const wave = Math.sin(t * Math.PI * 8) * Math.sin(t * Math.PI) * 3.2;
+      const base = graphBase - riseAtPoint + wave;
       points.push(`${x.toFixed(2)} ${base.toFixed(2)}`);
     }
     return `M ${points.join(" L ")}`;
@@ -421,19 +453,19 @@ function AviatorGame() {
                 <div className="axis-y-line" aria-hidden="true" />
                 <div className="axis-x-line" aria-hidden="true" />
                 <div className="y-dots">
-                  <div className="y-dots-track scrolling">
+                  <div className={multiplier >= 2 ? "y-dots-track moving" : "y-dots-track"}>
                     {[0, 1].map((group) => <div className="y-dot-group" key={group}>{Array.from({ length: 7 }).map((_, i) => <i key={i} />)}</div>)}
                   </div>
                 </div>
                 <div className="x-dots">
-                  <div className="x-dots-track scrolling">
+                  <div className={multiplier >= 2 ? "x-dots-track moving" : "x-dots-track"}>
                     {[0, 1].map((group) => <div className="x-dot-group" key={group}>{Array.from({ length: 9 }).map((_, i) => <i key={i} />)}</div>)}
                   </div>
                 </div>
               </>
             )}
 
-            <svg className={`flight-curve ${phase === "flying" ? "" : "is-hidden"}`} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <svg className={`flight-curve ${phase === "intro" ? "is-hidden" : ""}`} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
               <defs><linearGradient id="flightFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="var(--game-red-soft)" /><stop offset="1" stopColor="var(--game-red-deep)" /></linearGradient></defs>
               <path d={`${curve} L ${curveEnd.x} 95 Z`} fill="url(#flightFill)" />
               <path d={curve} fill="none" stroke="var(--game-red)" strokeWidth="2" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
@@ -452,8 +484,8 @@ function AviatorGame() {
               </div>
             ) : (
               <>
-                {phase === "flying" && (
-                  <div className="plane-holder" style={{ left: `${curveEnd.x}%`, bottom: `${100 - curveEnd.y}%` }}>
+                {(
+                  <div className={phase === "crashed" ? "plane-holder stopped" : "plane-holder"} style={{ left: `${curveEnd.x}%`, bottom: `${100 - curveEnd.y}%` }}>
                     <img className="flight-plane" src={planeFrame} alt="Flying airplane" />
                   </div>
                 )}
