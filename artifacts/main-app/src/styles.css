@@ -274,10 +274,9 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .bet-panel.auto-mode { padding: 10px 7% 6px; }
 .bet-panel.auto-mode .bet-tabs { width: 180px; height: 24px; margin-bottom: 8px; }
 .bet-panel.auto-mode .bet-panel-body { max-width: 390px; }
-.stake-row { display: grid; grid-template-columns: 25px 1fr 25px; align-items: center; height: 28px; border-radius: 17px; background: var(--game-row); }
-.stake-row button { width: 19px; height: 19px; margin: auto; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--muted-foreground); background: transparent; color: var(--muted-foreground); }
-.stake-row svg { width: 14px; }.stake-row strong { text-align: center; font-size: 19px; }
-.stake-row strong { font-size: 17px; }
+.stake-row { display: grid; grid-template-columns: 25px minmax(0, 1fr) 25px; align-items: center; height: 28px; padding: 0 2px; border-radius: 17px; background: var(--game-row); }
+.stake-row button { width: 19px; height: 19px; margin: 0 auto; display: grid; place-items: center; padding: 0; border-radius: 50%; border: 1px solid var(--muted-foreground); background: transparent; color: var(--muted-foreground); line-height: 0; }
+.stake-row svg { width: 12px; height: 12px; }.stake-row strong { display: block; min-width: 0; text-align: center; font-size: 17px; line-height: 1; }
 .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; margin-top: 3px; }
 .quick-grid button { height: 15px; border-radius: 11px; background: var(--game-row); color: var(--muted-foreground); font-size: 11px; }
 .main-bet { height: 58px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 16px; border: 2px solid oklch(0.82 0.17 140); background: var(--game-green); text-shadow: 0 1px 1px oklch(0 0 0 / .35); }

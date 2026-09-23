@@ -195,6 +195,22 @@ const history = [
   "5.35x", "1.50x", "12.02x", "1.56x", "1.26x", "2.99x", "1.14x", "74.65x", "1.12x", "17.41x", "1.26x", "1.19x", "2.60x", "3.93x", "1.02x", "1.90x", "3.04x",
 ];
 
+const betAmountSteps = [
+  10, 20, 30, 40, 50, 60, 70, 80, 90, 100,
+  200, 300, 400, 500,
+  1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000,
+];
+
+function shiftBetAmount(value: number, direction: -1 | 1) {
+  const currentIndex = betAmountSteps.indexOf(value);
+  const safeIndex = currentIndex >= 0
+    ? currentIndex
+    : betAmountSteps.reduce((closest, amount, index) => (
+      Math.abs(amount - value) < Math.abs((betAmountSteps[closest] ?? 10) - value) ? index : closest
+    ), 0);
+  return betAmountSteps[clamp(safeIndex + direction, 0, betAmountSteps.length - 1)] ?? 10;
+}
+
 function historyTone(value: string) {
   const multiplierValue = Number.parseFloat(value);
   if (multiplierValue >= 10) return "pink";
@@ -274,7 +290,7 @@ function BetPanel({ initial }: { initial: number }) {
   const [loseDecreaseValue, setLoseDecreaseValue] = useState(50);
   const [winIncreaseValue, setWinIncreaseValue] = useState(100);
   const [winDecreaseValue, setWinDecreaseValue] = useState(50);
-  const change = (by: number) => setAmount((value) => Math.max(10, value + by));
+  const change = (direction: -1 | 1) => setAmount((value) => shiftBetAmount(value, direction));
   return (
     <section className={mode === "Auto" ? "bet-panel auto-mode" : "bet-panel"}>
       <div className="bet-tabs">
@@ -283,9 +299,9 @@ function BetPanel({ initial }: { initial: number }) {
       <div className="bet-panel-body">
         <div className="stake-tools">
           <div className="stake-row">
-            <button aria-label="Decrease bet" onClick={() => change(-10)}><Minus /></button>
+            <button aria-label="Decrease bet" onClick={() => change(-1)}><Minus /></button>
             <strong>{amount.toFixed(2)}</strong>
-            <button aria-label="Increase bet" onClick={() => change(10)}><Plus /></button>
+            <button aria-label="Increase bet" onClick={() => change(1)}><Plus /></button>
           </div>
           <div className="quick-grid">
             {[10, 100, 500, 1000].map((value) => <button key={value} onClick={() => setAmount(value)}>{value.toLocaleString()}</button>)}
