@@ -35,7 +35,7 @@ export const Route = createFileRoute("/")({
 
 const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, avatar9, avatar10, avatar11, avatar12];
 const planeBody = "/aviator/plane-body.svg";
-const fanFrames = ["/aviator/fan-frame-1.svg", "/aviator/fan-frame-2.svg", "/aviator/fan-frame-3.svg"];
+const fanFrame = "/aviator/fan-frame-1.svg";
 
 type LiveBet = { id: string; name: string; avatar: number; amount: number; cashAt: number | null };
 
@@ -230,7 +230,6 @@ function AviatorGame() {
   const [multiplier, setMultiplier] = useState(1);
   const [flight, setFlight] = useState(0);
   const [roundProgress, setRoundProgress] = useState(0);
-  const [fanFrameIndex, setFanFrameIndex] = useState(0);
   const [phase, setPhase] = useState<"intro" | "flying" | "crashed">("intro");
   const [round, setRound] = useState(3325559);
   const [tab, setTab] = useState("All Bets");
@@ -285,14 +284,6 @@ function AviatorGame() {
         setMultiplier(2.95);
       }
     }, 50);
-    return () => window.clearInterval(timer);
-  }, [loaded]);
-
-  useEffect(() => {
-    if (!loaded) return;
-    const timer = window.setInterval(() => {
-      setFanFrameIndex((frame) => (frame + 1) % fanFrames.length);
-    }, 72);
     return () => window.clearInterval(timer);
   }, [loaded]);
 
@@ -443,14 +434,7 @@ function AviatorGame() {
                 <img className="official-badge" src={officialAsset.url} alt="Spribe official game" />
                 <div className="intro-plane-holder" aria-hidden="true">
                   <img className="intro-plane" src={planeBody} alt="" />
-                  {fanFrames.map((frame, index) => (
-                    <img
-                      className={index === fanFrameIndex ? "intro-fan active" : "intro-fan"}
-                      key={frame}
-                      src={frame}
-                      alt=""
-                    />
-                  ))}
+                  <img className={animationOn ? "intro-fan" : "intro-fan paused"} src={fanFrame} alt="" />
                 </div>
               </div>
             ) : (
@@ -458,15 +442,7 @@ function AviatorGame() {
                 {phase === "flying" && (
                   <div className="plane-holder" style={{ left: `${curveEnd.x}%`, bottom: `${100 - curveEnd.y}%` }}>
                     <img className="flight-plane" src={planeBody} alt="Flying airplane" />
-                    {fanFrames.map((frame, index) => (
-                      <img
-                        className={index === fanFrameIndex ? "flight-fan active" : "flight-fan"}
-                        key={frame}
-                        src={frame}
-                        alt=""
-                        aria-hidden="true"
-                      />
-                    ))}
+                    <img className={animationOn ? "flight-fan" : "flight-fan paused"} src={fanFrame} alt="" aria-hidden="true" />
                   </div>
                 )}
                 <div className={`multiplier ${phase === "crashed" ? "crashed" : ""}`}>
