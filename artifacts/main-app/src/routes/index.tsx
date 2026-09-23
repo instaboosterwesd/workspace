@@ -50,9 +50,7 @@ const lowerTarget = { x: 87.7, y: 28.6 };
 const upperTangentSlope = -0.82;
 const lowerTangentSlope = -0.61;
 const upperTouchMultiplier = 1.7;
-const firstLowerTouchMultiplier = 2.2;
-const secondUpperTouchMultiplier = 2.7;
-const repeatingTouchGap = 1;
+const endpointSegmentDurationMs = 3300;
 
 type FlightPoint = { x: number; y: number };
 type EndpointState = FlightPoint & { multiplier: number; tangentSlope: number };
@@ -83,7 +81,11 @@ function flightDurationForTarget(target: number) {
   return Math.max(4200, Math.round(flightDurationMs * progressToTarget));
 }
 
-function endpointStateAt(progress: number, crashAt: number): EndpointState {
+function endpointStateAt(
+  progress: number,
+  crashAt: number,
+  elapsedMs = progress * flightDurationForTarget(crashAt),
+): EndpointState {
   const safeProgress = clamp(progress, 0, 1);
   const multiplier = Math.pow(crashAt, safeProgress);
 
@@ -104,30 +106,18 @@ function endpointStateAt(progress: number, crashAt: number): EndpointState {
     };
   }
 
-  let from = upperTarget;
-  let to = lowerTarget;
-  let segmentStart = upperTouchMultiplier;
-  let segmentEnd = firstLowerTouchMultiplier;
+  const upperTouchElapsed = flightDurationForTarget(crashAt)
+    * Math.log(upperTouchMultiplier)
+    / Math.log(crashAt);
+  const movementElapsed = Math.max(0, elapsedMs - upperTouchElapsed);
+  const segmentIndex = Math.floor(movementElapsed / endpointSegmentDurationMs);
+  const startsAtUpper = segmentIndex % 2 === 0;
+  const from = startsAtUpper ? upperTarget : lowerTarget;
+  const to = startsAtUpper ? lowerTarget : upperTarget;
+  const transition = smoothStep(
+    (movementElapsed % endpointSegmentDurationMs) / endpointSegmentDurationMs,
+  );
 
-  if (multiplier >= firstLowerTouchMultiplier && multiplier < secondUpperTouchMultiplier) {
-    from = lowerTarget;
-    to = upperTarget;
-    segmentStart = firstLowerTouchMultiplier;
-    segmentEnd = secondUpperTouchMultiplier;
-  } else if (multiplier >= secondUpperTouchMultiplier) {
-    const segmentIndex = Math.floor(multiplier - secondUpperTouchMultiplier);
-    const startsAtUpper = segmentIndex % 2 === 0;
-    from = startsAtUpper ? upperTarget : lowerTarget;
-    to = startsAtUpper ? lowerTarget : upperTarget;
-    segmentStart = secondUpperTouchMultiplier + segmentIndex * repeatingTouchGap;
-    segmentEnd = segmentStart + repeatingTouchGap;
-  }
-
-  const transition = smoothStep(clamp(
-    (multiplier - segmentStart) / (segmentEnd - segmentStart),
-    0,
-    1,
-  ));
   return {
     x: lerp(from.x, to.x, transition),
     y: lerp(from.y, to.y, transition),
@@ -452,7 +442,11 @@ function AviatorGame() {
         setMultiplier(1);
       } else if (elapsed < introDuration + currentFlightDuration) {
         const flightProgress = Math.min((elapsed - introDuration) / currentFlightDuration, 1);
-        const endpoint = endpointStateAt(flightProgress, currentCrashAt);
+        const endpoint = endpointStateAt(
+          flightProgress,
+          currentCrashAt,
+          elapsed - introDuration,
+        );
         setPhase("flying");
         setFlight(flightProgress);
         setRoundProgress(1);
@@ -587,12 +581,12 @@ function AviatorGame() {
                 <div className="axis-y-line" aria-hidden="true" />
                 <div className="axis-x-line" aria-hidden="true" />
                 <div className="y-dots">
-                  <div className={multiplier >= 2 ? "y-dots-track moving" : "y-dots-track"}>
+                  <div className={multiplier >= upperTouchMultiplier ? "y-dots-track moving" : "y-dots-track"}>
                     {[0, 1].map((group) => <div className="y-dot-group" key={group}>{Array.from({ length: 7 }).map((_, i) => <i key={i} />)}</div>)}
                   </div>
                 </div>
                 <div className="x-dots">
-                  <div className={multiplier >= 2 ? "x-dots-track moving" : "x-dots-track"}>
+                  <div className={multiplier >= upperTouchMultiplier ? "x-dots-track moving" : "x-dots-track"}>
                     {[0, 1].map((group) => <div className="x-dot-group" key={group}>{Array.from({ length: 9 }).map((_, i) => <i key={i} />)}</div>)}
                   </div>
                 </div>

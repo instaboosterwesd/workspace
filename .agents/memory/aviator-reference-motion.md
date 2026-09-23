@@ -14,3 +14,9 @@ The measured repeat states are upper 1.70x at normalized `(x=0.770, y=0.171)` wi
 **Why:** The geometry notes identify the curve/fill intersection as the authoritative endpoint; the airplane must derive from that point rather than using an independent position.
 
 **How to apply:** Keep these target coordinates and endpoint slopes as the responsive reference anchors. Use one continuous curve geometry for each current endpoint, and derive the red fill edge, airplane, and multiplier from the same state.
+
+The upper/lower endpoint movement must use a fixed wall-clock duration per segment after the 1.70x upper touch, independent of how quickly the multiplier reaches 10x or 20x. Start the moving graph dots at the 1.70x upper touch, not at 2.00x.
+
+**Why:** The requested reference behavior keeps the aircraft's visual movement speed stable while the numeric multiplier can accelerate.
+
+**How to apply:** Keep multiplier progression separate from endpoint transition timing; use elapsed flight time for repeated up/down transitions and the 1.70x threshold for both moving dot tracks.
