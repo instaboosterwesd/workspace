@@ -29,7 +29,7 @@
   --accent: oklch(0.68 0.22 142);
   --border: oklch(0.25 0 0);
   --game-red: oklch(0.58 0.24 20);
-  --plane-red: #E50539;
+  --plane-red: #FF1F1F;
   --game-red-soft: oklch(0.42 0.18 18 / 0.52);
   --game-red-deep: oklch(0.24 0.11 18 / 0.72);
   --game-green: oklch(0.68 0.22 142);
