@@ -29,6 +29,7 @@
   --accent: oklch(0.68 0.22 142);
   --border: oklch(0.25 0 0);
   --game-red: oklch(0.58 0.24 20);
+  --plane-red: #E50539;
   --game-red-soft: oklch(0.42 0.18 18 / 0.52);
   --game-red-deep: oklch(0.24 0.11 18 / 0.72);
   --game-green: oklch(0.68 0.22 142);
@@ -157,9 +158,9 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 
 .flight-curve { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; overflow: hidden; shape-rendering: geometricPrecision; }
 .flight-curve.is-hidden { opacity: 0; }
-.plane-holder { position: absolute; z-index: 2; width: clamp(92px, 10vw, 148px); aspect-ratio: 150 / 74; transform: translate(-6%, 18%); transition: left 80ms linear, bottom 80ms linear; }
+.plane-holder { position: absolute; z-index: 2; width: clamp(92px, 10vw, 148px); aspect-ratio: 150 / 74; transform: translate(-6%, 18%); }
 .plane-holder.intro-position { z-index: 3; left: 2%; bottom: 8%; width: clamp(80px, 9vw, 130px); transform: none; }
-.plane-holder.flight-position { z-index: 2; opacity: 1; }
+.plane-holder.flight-position { z-index: 2; opacity: 1; transition: none; }
 .plane-holder.is-hidden { visibility: hidden; opacity: 0; }
 .plane-frame-stack { position: absolute; inset: 0; }
 .plane-frame-layer { position: absolute; inset: 0; display: block; width: 100%; height: auto; opacity: 0; pointer-events: none; }

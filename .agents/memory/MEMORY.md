@@ -1,3 +1,4 @@
 - [Preview workflow runtime](preview-workflow-runtime.md) — managed workflows may need the local Vite entrypoint invoked directly.
 - [SVG layer transforms](svg-layer-transforms.md) — preserve source transforms when splitting supplied full-plane SVG frames into body and fan layers.
 - [Aviator reference motion](aviator-reference-motion.md) — the supplied flight keeps one continuous rising graph; do not add artificial down/up dips to the historical red path.
+- [Aviator plane anchor](aviator-plane-anchor.md) — keep the plane position transition-free so its rear/lower anchor stays exactly on the live curve endpoint.
