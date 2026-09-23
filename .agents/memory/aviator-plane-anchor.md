@@ -8,3 +8,9 @@ The flight plane's lower/rear anchor is intentionally aligned to the live curve 
 **Why:** The reference keeps the red wave attached to the aircraft at every point. A short position transition makes the plane lag behind the curve while the endpoint moves.
 
 **How to apply:** Keep the existing plane asset anchor transform and update the plane position directly from the same endpoint state that drives the curve and fill. Only the plane's frame artwork may animate.
+
+When the red line needs a visual correction into the aircraft, keep the original cubic curve ending at the live endpoint and append a short straight SVG line segment to the corrected underside point. Do not replace the cubic endpoint alone, because that leaves the old control point behind and creates a visible kink.
+
+**Why:** The reference connection is a direct straight attachment under the plane; changing only the cubic endpoint introduced a small bend and an apparent gap.
+
+**How to apply:** Use the live curve endpoint for the cubic path, then add the independent line endpoint with `L` for both the stroked path and the filled area.
