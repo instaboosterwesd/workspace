@@ -190,7 +190,7 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .multiplier { position: absolute; z-index: 3; inset: 42% 0 auto; text-align: center; font-size: clamp(52px, 6.5vw, 100px); font-weight: 800; line-height: 1; }
 .multiplier small { display: block; margin-bottom: 8px; color: #fff; font-size: clamp(17px, 2vw, 29px); }
 .multiplier.crashed { color: var(--game-red); font-size: clamp(58px, 8vw, 100px); animation: crash-text .28s ease-out both; }
-.plane-holder.crashing { animation: plane-crash .16s linear forwards; will-change: transform, opacity; }
+.plane-holder.crashing { animation: plane-crash .10s linear forwards; will-change: transform, opacity; }
 .plane-holder.crashing .flight-plane { animation: none; }
 .round-intro { position: absolute; inset: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; animation: intro-reveal .35s ease-out both; }
 .partners-logo { width: min(310px, 39%); height: auto; }

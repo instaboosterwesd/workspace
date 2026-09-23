@@ -525,7 +525,7 @@ function AviatorGame() {
   useEffect(() => {
     if (!loaded) return;
     const introDuration = 10000;
-    const crashDuration = 1700;
+    const crashDuration = 400;
     let roundIndex = 0;
     let roundStartedAt = Date.now();
     let currentCrashAt = pickCrashMultiplier();
