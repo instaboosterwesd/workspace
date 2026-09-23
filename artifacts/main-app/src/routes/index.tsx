@@ -18,6 +18,9 @@ import avatar9 from "../assets/aviator/avatar-9.png.asset.json";
 import avatar10 from "../assets/aviator/avatar-10.png.asset.json";
 import avatar11 from "../assets/aviator/avatar-11.png.asset.json";
 import avatar12 from "../assets/aviator/avatar-12.png.asset.json";
+import planeFrameSmall from "../assets/aviator/plane-frame-1.svg";
+import planeFrameMedium from "../assets/aviator/plane-frame-2.svg";
+import planeFrameBig from "../assets/aviator/plane-frame-3.svg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -34,8 +37,8 @@ export const Route = createFileRoute("/")({
 });
 
 const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, avatar9, avatar10, avatar11, avatar12];
-const planeBody = "/aviator/plane-body.svg";
-const fanFrame = "/aviator/fan-frame-1.svg";
+const planeFrames = [planeFrameSmall, planeFrameMedium, planeFrameBig];
+const planeFrameSequence = [0, 1, 2, 1] as const;
 
 type LiveBet = { id: string; name: string; avatar: number; amount: number; cashAt: number | null };
 
@@ -230,6 +233,7 @@ function AviatorGame() {
   const [multiplier, setMultiplier] = useState(1);
   const [flight, setFlight] = useState(0);
   const [roundProgress, setRoundProgress] = useState(0);
+  const [planeFrameStep, setPlaneFrameStep] = useState(0);
   const [phase, setPhase] = useState<"intro" | "flying" | "crashed">("intro");
   const [round, setRound] = useState(3325559);
   const [tab, setTab] = useState("All Bets");
@@ -288,6 +292,14 @@ function AviatorGame() {
   }, [loaded]);
 
   useEffect(() => {
+    if (!loaded || !animationOn) return;
+    const timer = window.setInterval(() => {
+      setPlaneFrameStep((step) => (step + 1) % planeFrameSequence.length);
+    }, 180);
+    return () => window.clearInterval(timer);
+  }, [loaded, animationOn]);
+
+  useEffect(() => {
     if (!loaded) return;
     setLiveBets(makeRoundBets(round));
     setTotalBets(1100 + Math.floor(Math.random() * 700));
@@ -307,6 +319,8 @@ function AviatorGame() {
   // The source graph sits just above the white x-axis dots. Keep its start
   // aligned with the blue y-axis and let the plane travel on the line.
   const curveEnd = useMemo(() => ({ x: 4 + flight * 77, y: 95 - flight * 77 }), [flight]);
+  const planeFrameIndex = planeFrameSequence[planeFrameStep] ?? 0;
+  const planeFrame = planeFrames[planeFrameIndex] ?? planeFrames[0];
   const curve = useMemo(() => {
     const { x: endX, y: endY } = curveEnd;
     const graphBase = 95;
@@ -433,16 +447,14 @@ function AviatorGame() {
                 </div>
                 <img className="official-badge" src={officialAsset.url} alt="Spribe official game" />
                 <div className="intro-plane-holder" aria-hidden="true">
-                  <img className="intro-plane" src={planeBody} alt="" />
-                  <img className={animationOn ? "intro-fan" : "intro-fan paused"} src={fanFrame} alt="" />
+                  <img className="plane-animation-frame" src={planeFrame} alt="" />
                 </div>
               </div>
             ) : (
               <>
                 {phase === "flying" && (
                   <div className="plane-holder" style={{ left: `${curveEnd.x}%`, bottom: `${100 - curveEnd.y}%` }}>
-                    <img className="flight-plane" src={planeBody} alt="Flying airplane" />
-                    <img className={animationOn ? "flight-fan" : "flight-fan paused"} src={fanFrame} alt="" aria-hidden="true" />
+                    <img className="plane-animation-frame" src={planeFrame} alt="Flying airplane" />
                   </div>
                 )}
                 <div className={`multiplier ${phase === "crashed" ? "crashed" : ""}`}>
