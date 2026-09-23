@@ -89,6 +89,28 @@ function LoadingScreen({ progress }: { progress: number }) {
   );
 }
 
+function AutoToggle({ checked, onToggle, label }: { checked: boolean; onToggle: () => void; label: string }) {
+  return (
+    <button className={checked ? "auto-switch on" : "auto-switch"} aria-pressed={checked} aria-label={label} onClick={onToggle}>
+      <i />
+    </button>
+  );
+}
+
+function AutoStepper({ value, onChange, step = 1, suffix = "" }: { value: number; onChange: (value: number) => void; step?: number; suffix?: string }) {
+  const decimals = step < 1 ? 1 : suffix === "%" ? 0 : 2;
+  return (
+    <div className="auto-stepper">
+      <div className="auto-stepper-core">
+        <button aria-label={`Decrease ${suffix || "value"}`} onClick={() => onChange(Math.max(0, Number((value - step).toFixed(decimals))))}><Minus /></button>
+        <strong>{value.toFixed(decimals)}</strong>
+        <button aria-label={`Increase ${suffix || "value"}`} onClick={() => onChange(Number((value + step).toFixed(decimals)))}><Plus /></button>
+      </div>
+      {suffix && <span>{suffix}</span>}
+    </div>
+  );
+}
+
 function BetPanel({ initial }: { initial: number }) {
   const [amount, setAmount] = useState(initial);
   const [placed, setPlaced] = useState(false);
@@ -97,6 +119,22 @@ function BetPanel({ initial }: { initial: number }) {
   const [autoTarget, setAutoTarget] = useState(1.1);
   const [autoOpen, setAutoOpen] = useState(false);
   const [rounds, setRounds] = useState(100);
+  const [stopDecrease, setStopDecrease] = useState(false);
+  const [stopIncrease, setStopIncrease] = useState(false);
+  const [stopSingleWin, setStopSingleWin] = useState(false);
+  const [loseReturn, setLoseReturn] = useState(true);
+  const [loseIncrease, setLoseIncrease] = useState(false);
+  const [loseDecrease, setLoseDecrease] = useState(false);
+  const [winReturn, setWinReturn] = useState(true);
+  const [winIncrease, setWinIncrease] = useState(false);
+  const [winDecrease, setWinDecrease] = useState(false);
+  const [stopDecreaseValue, setStopDecreaseValue] = useState(0);
+  const [stopIncreaseValue, setStopIncreaseValue] = useState(0);
+  const [stopSingleWinValue, setStopSingleWinValue] = useState(0);
+  const [loseIncreaseValue, setLoseIncreaseValue] = useState(100);
+  const [loseDecreaseValue, setLoseDecreaseValue] = useState(50);
+  const [winIncreaseValue, setWinIncreaseValue] = useState(100);
+  const [winDecreaseValue, setWinDecreaseValue] = useState(50);
   const change = (by: number) => setAmount((value) => Math.max(10, value + by));
   return (
     <section className={mode === "Auto" ? "bet-panel auto-mode" : "bet-panel"}>
@@ -134,20 +172,55 @@ function BetPanel({ initial }: { initial: number }) {
       )}
       {autoOpen && (
         <div className="help-backdrop" onClick={() => setAutoOpen(false)}>
-          <div className="help-dialog auto-dialog" onClick={(event) => event.stopPropagation()}>
-            <div className="help-dialog-head"><h2>Auto Play Options</h2><button aria-label="Close" onClick={() => setAutoOpen(false)}>×</button></div>
-            <div className="auto-body">
-              <p>Number of Rounds:</p>
-              <div className="round-chips">
-                {[10, 20, 50, 100, 500, 1000].map((value) => <button key={value} className={rounds === value ? "active" : ""} onClick={() => setRounds(value)}>{value}</button>)}
+          <section className="help-dialog auto-dialog" role="dialog" aria-modal="true" aria-labelledby="auto-play-title" onClick={(event) => event.stopPropagation()}>
+            <div className="help-dialog-head"><h2 id="auto-play-title">Auto Play Options</h2><button aria-label="Close" onClick={() => setAutoOpen(false)}>×</button></div>
+            <div className="auto-dialog-scroll">
+              <section className="auto-section rounds-section">
+                <p className="auto-section-title">Number of rounds:</p>
+                <div className="round-chips">
+                  {[10, 20, 50, 100, 500, 1000].map((value) => <button key={value} className={rounds === value ? "active" : ""} onClick={() => setRounds(value)}>{value}</button>)}
+                </div>
+                <div className="auto-cash-field">
+                  <span>Auto Cash Out:</span>
+                  <div className="auto-cash-value">
+                    <input aria-label="Auto cash out value" value={autoTarget} onChange={(event) => setAutoTarget(Number(event.target.value) || 1)} />
+                    <button aria-label="Clear auto cash out" onClick={() => setAutoTarget(1.1)}>×</button>
+                  </div>
+                </div>
+              </section>
+              <div className="auto-rule">
+                <AutoToggle checked={stopDecrease} onToggle={() => setStopDecrease((value) => !value)} label="Stop if cash decreases" />
+                <span>Stop if cash decreases by</span>
+                <AutoStepper value={stopDecreaseValue} onChange={setStopDecreaseValue} suffix="INR" />
               </div>
-              <div className="auto-field"><span>Auto Cash Out</span><input value={autoTarget} onChange={(event) => setAutoTarget(Number(event.target.value) || 1)} /></div>
-              <div className="auto-check"><i /> Stop if cash decreases by <em>0.00</em> INR</div>
-              <div className="auto-check"><i /> Stop if cash increases by <em>0.00</em> INR</div>
-              <div className="auto-check"><i /> Stop if single win exceeds <em>0.00</em> INR</div>
-              <div className="auto-actions"><button className="reset" onClick={() => setAutoOpen(false)}>Reset</button><button className="start" onClick={() => setAutoOpen(false)}>Start</button></div>
+              <div className="auto-rule">
+                <AutoToggle checked={stopIncrease} onToggle={() => setStopIncrease((value) => !value)} label="Stop if cash increases" />
+                <span>Stop if cash increases by</span>
+                <AutoStepper value={stopIncreaseValue} onChange={setStopIncreaseValue} suffix="INR" />
+              </div>
+              <div className="auto-rule">
+                <AutoToggle checked={stopSingleWin} onToggle={() => setStopSingleWin((value) => !value)} label="Stop if single win exceeds" />
+                <span>Stop if single win exceeds</span>
+                <AutoStepper value={stopSingleWinValue} onChange={setStopSingleWinValue} suffix="INR" />
+              </div>
+              <section className="auto-section strategy-section">
+                <h3>If I Lose</h3>
+                <div className="strategy-row"><AutoToggle checked={loseReturn} onToggle={() => setLoseReturn((value) => !value)} label="Return to initial bet after a loss" /><span>Return to initial bet</span></div>
+                <div className="strategy-row"><AutoToggle checked={loseIncrease} onToggle={() => setLoseIncrease((value) => !value)} label="Increase bet after a loss" /><span>Increase bet</span><AutoStepper value={loseIncreaseValue} onChange={setLoseIncreaseValue} suffix="%" /></div>
+                <div className="strategy-row"><AutoToggle checked={loseDecrease} onToggle={() => setLoseDecrease((value) => !value)} label="Decrease bet after a loss" /><span>Decrease bet</span><AutoStepper value={loseDecreaseValue} onChange={setLoseDecreaseValue} suffix="%" /></div>
+              </section>
+              <section className="auto-section strategy-section">
+                <h3>If I Win</h3>
+                <div className="strategy-row"><AutoToggle checked={winReturn} onToggle={() => setWinReturn((value) => !value)} label="Return to initial bet after a win" /><span>Return to initial bet</span></div>
+                <div className="strategy-row"><AutoToggle checked={winIncrease} onToggle={() => setWinIncrease((value) => !value)} label="Increase bet after a win" /><span>Increase bet</span><AutoStepper value={winIncreaseValue} onChange={setWinIncreaseValue} suffix="%" /></div>
+                <div className="strategy-row"><AutoToggle checked={winDecrease} onToggle={() => setWinDecrease((value) => !value)} label="Decrease bet after a win" /><span>Decrease bet</span><AutoStepper value={winDecreaseValue} onChange={setWinDecreaseValue} suffix="%" /></div>
+              </section>
             </div>
-          </div>
+            <div className="auto-actions">
+              <button className="reset" onClick={() => setAutoOpen(false)}>Reset</button>
+              <button className="start" onClick={() => setAutoOpen(false)}>Start</button>
+            </div>
+          </section>
         </div>
       )}
     </section>

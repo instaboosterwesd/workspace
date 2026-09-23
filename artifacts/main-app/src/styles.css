@@ -184,21 +184,42 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .switch { width: 30px; height: 16px; padding: 2px; border-radius: 9px; background: oklch(0.3 0 0); display: flex; }
 .switch i { width: 12px; height: 12px; border-radius: 50%; background: var(--muted-foreground); transition: transform .15s ease; }
 .switch.on { background: var(--game-green); } .switch.on i { transform: translateX(14px); background: var(--foreground); }
-.auto-dialog { width: min(430px, 94vw); }
-.auto-body { display: grid; gap: 11px; padding: 14px 16px 16px; font-size: 12px; color: var(--muted-foreground); }
-.auto-body p { margin: 0; }
-.round-chips { display: flex; gap: 6px; flex-wrap: wrap; }
-.round-chips button { min-width: 48px; height: 24px; border-radius: 13px; background: var(--game-row); color: var(--muted-foreground); font-size: 12px; }
-.round-chips button.active { background: oklch(0.34 0 0); color: var(--foreground); font-weight: 700; }
-.auto-field { display: flex; align-items: center; gap: 10px; }
-.auto-field input { width: 120px; height: 26px; padding: 0 12px; border: 0; border-radius: 13px; background: var(--game-row); color: var(--foreground); font: inherit; }
-.auto-check { display: flex; align-items: center; gap: 8px; }
-.auto-check i { width: 13px; height: 13px; border-radius: 50%; border: 1px solid var(--border); }
-.auto-check em { margin-left: auto; padding: 3px 14px; border-radius: 13px; background: var(--game-row); font-style: normal; color: var(--foreground); }
-.auto-actions { display: flex; justify-content: center; gap: 10px; margin-top: 4px; }
-.auto-actions button { min-width: 108px; height: 28px; border-radius: 14px; font-weight: 700; font-size: 12px; }
-.auto-actions .reset { background: var(--game-gold); color: oklch(0.25 0.05 70); }
-.auto-actions .start { background: var(--game-green); color: var(--foreground); }
+.auto-dialog { width: min(528px, 94vw); max-height: min(805px, calc(100dvh - 20px)); display: flex; flex-direction: column; overflow: hidden; border-radius: 8px; background: oklch(0.15 0.01 260); }
+.auto-dialog .help-dialog-head { flex: 0 0 48px; height: 48px; padding: 0 17px; background: oklch(0.19 0.01 260); }
+.auto-dialog .help-dialog-head h2 { font-size: 16px; font-weight: 500; }
+.auto-dialog-scroll { flex: 1; min-height: 0; overflow-y: auto; display: grid; gap: 8px; padding: 8px 9px; background: oklch(0.13 0.01 260); scrollbar-width: thin; scrollbar-color: oklch(0.28 0.01 260) transparent; }
+.auto-dialog-scroll::-webkit-scrollbar { width: 5px; }
+.auto-dialog-scroll::-webkit-scrollbar-thumb { background: oklch(0.28 0.01 260); border-radius: 4px; }
+.auto-section, .auto-rule { border-radius: 10px; background: oklch(0.19 0.01 260); }
+.auto-section { padding: 10px; }
+.auto-section-title { margin: 0 0 8px; color: var(--foreground); font-size: 14px; font-weight: 600; }
+.round-chips { display: flex; gap: 7px; }
+.round-chips button { flex: 1 1 0; min-width: 0; height: 30px; border: 1px solid transparent; border-radius: 16px; background: oklch(0.14 0.01 260); color: var(--muted-foreground); font-size: 12px; }
+.round-chips button.active { border-color: oklch(0.7 0.2 135); background: oklch(0.34 0.02 260); color: var(--foreground); }
+.auto-cash-field { display: flex; align-items: center; gap: 10px; margin-top: 10px; color: var(--foreground); font-size: 14px; font-weight: 600; }
+.auto-cash-value { display: flex; align-items: center; width: 130px; height: 35px; padding-left: 14px; border-radius: 18px; background: oklch(0.035 0 0); }
+.auto-cash-value input { width: 82px; height: 100%; padding: 0; border: 0; outline: 0; background: transparent; color: var(--foreground); font: 700 19px/1 Arial, Helvetica, sans-serif; text-align: center; }
+.auto-cash-value button { width: 22px; height: 22px; padding: 0; border-radius: 50%; background: transparent; color: var(--muted-foreground); font-size: 15px; line-height: 1; }
+.auto-cash-value button:hover { color: var(--foreground); background: oklch(0.2 0 0); }
+.auto-rule { min-height: 61px; display: grid; grid-template-columns: 31px 1fr auto; align-items: center; gap: 7px; padding: 9px 10px; color: var(--muted-foreground); font-size: 14px; }
+.auto-switch { width: 36px; height: 19px; display: flex; align-items: center; padding: 2px; border: 1px solid oklch(0.38 0.01 260); border-radius: 11px; background: oklch(0.24 0.01 260); }
+.auto-switch i { width: 13px; height: 13px; border-radius: 50%; background: oklch(0.86 0.08 95); box-shadow: 0 0 0 1px oklch(0.92 0.04 95 / .65); transition: transform .16s ease; }
+.auto-switch.on { background: var(--game-green); border-color: oklch(0.78 0.18 135); }
+.auto-switch.on i { transform: translateX(17px); background: var(--foreground); }
+.auto-stepper { display: flex; align-items: center; gap: 5px; }
+.auto-stepper-core { display: grid; grid-template-columns: 23px 1fr 23px; align-items: center; width: 129px; height: 35px; padding: 0 4px; border-radius: 19px; background: oklch(0.035 0 0); }
+.auto-stepper-core button { width: 20px; height: 20px; display: grid; place-items: center; padding: 0; border: 1px solid oklch(0.32 0.01 260); border-radius: 50%; background: transparent; color: var(--muted-foreground); }
+.auto-stepper-core button svg { width: 13px; height: 13px; }
+.auto-stepper-core strong { color: var(--foreground); font-size: 17px; text-align: center; }
+.auto-stepper > span { color: var(--muted-foreground); font-size: 13px; }
+.strategy-section { padding: 8px 10px 10px; }
+.strategy-section h3 { margin: 0 0 4px; color: var(--foreground); font-size: 14px; font-weight: 700; }
+.strategy-row { min-height: 36px; display: grid; grid-template-columns: 31px 1fr auto; align-items: center; gap: 7px; color: var(--muted-foreground); font-size: 14px; }
+.strategy-row > span { min-width: 0; }
+.auto-dialog .auto-actions { flex: 0 0 57px; display: flex; align-items: center; justify-content: center; gap: 16px; margin: 0; padding: 10px; border-top: 1px solid oklch(0.11 0.01 260); background: oklch(0.15 0.01 260); }
+.auto-actions button { height: 30px; border-radius: 16px; font-size: 14px; font-weight: 700; }
+.auto-actions .reset { width: 80px; background: oklch(0.72 0.15 75); color: oklch(0.25 0.05 70); }
+.auto-actions .start { width: 160px; background: var(--game-green); color: var(--foreground); }
 
 .bet-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .bet-panel { padding: 35px 7% 7px; background: var(--game-panel); border-radius: 12px; }
