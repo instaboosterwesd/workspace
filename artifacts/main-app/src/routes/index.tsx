@@ -329,6 +329,7 @@ function BetPanel({
     : isLost
       ? "0.00 INR"
       : `${money(amount)} INR`;
+  const showButtonAmount = !(phase === "intro" && placed);
 
   useEffect(() => {
     setPlaced(waitingForNextRound);
@@ -393,7 +394,7 @@ function BetPanel({
             onClick={handleMainBet}
           >
             <span>{buttonLabel}</span>
-            <b>{buttonAmount}</b>
+            {showButtonAmount && <b>{buttonAmount}</b>}
           </button>
         )}
       </div>
