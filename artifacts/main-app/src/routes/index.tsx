@@ -592,7 +592,7 @@ function AviatorGame() {
 
             <svg className={`flight-curve ${phase === "flying" ? "" : "is-hidden"}`} viewBox="0 0 100 100" preserveAspectRatio="none" shapeRendering="geometricPrecision" aria-hidden="true">
               <defs><linearGradient id="flightFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="var(--game-red-soft)" /><stop offset="1" stopColor="var(--game-red-deep)" /></linearGradient></defs>
-              <path d={`${curve} L ${curveEnd.x.toFixed(2)} ${graphBaselineY.toFixed(2)} Z`} fill="url(#flightFill)" />
+              <path d={`${curve} L ${curveEnd.x.toFixed(2)} ${graphBaselineY.toFixed(2)} L ${graphStartX.toFixed(2)} ${graphBaselineY.toFixed(2)} Z`} fill="url(#flightFill)" />
               <path d={curve} fill="none" stroke="var(--game-red)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
             </svg>
             {phase === "intro" ? (
