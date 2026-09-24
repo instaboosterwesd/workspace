@@ -539,7 +539,7 @@ function BetPanel({
     <section className={[
       "bet-panel",
       mode === "Auto" ? "auto-mode" : "",
-      waitingForNextRound ? "waiting" : "",
+      waitingForNextRound || (phase === "intro" && placed) ? "waiting" : "",
       isFlyingBet ? "cash-out-active" : "",
     ].filter(Boolean).join(" ")}>
       <div className="bet-tabs">
