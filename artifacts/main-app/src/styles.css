@@ -338,14 +338,12 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
   .play-area {
     order: 1;
     position: relative;
-    isolation: isolate;
     grid-template-rows: auto auto;
     overflow: visible;
   }
   .play-area.history-expanded { grid-template-rows: auto auto; }
   .game-frame-shell {
     position: relative;
-    isolation: isolate;
     display: grid;
     grid-template-rows: 52px clamp(280px, 37dvh, 330px);
     min-height: 0;
@@ -354,7 +352,7 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
   .history-bar.open {
     position: absolute;
     inset: 0 0 auto;
-    z-index: 50;
+    z-index: 100;
     width: 100%;
     height: min(308px, calc(100dvh - 110px));
     padding: 8px;
@@ -441,7 +439,6 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
   }
   .play-area {
     position: relative;
-    isolation: isolate;
     height: auto;
     min-height: 0;
     grid-template-rows: auto auto;
@@ -474,7 +471,7 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
   .history-bar.open {
     position: absolute;
     inset: 0 0 auto;
-    z-index: 50;
+    z-index: 100;
     width: 100%;
     height: 308px;
     padding: 8px 8px 9px;
