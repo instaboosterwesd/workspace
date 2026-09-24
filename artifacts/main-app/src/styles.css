@@ -334,14 +334,98 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
   .topbar { position: sticky; top: 0; }
   .help span { display: none; }
   .game-layout { height: auto; grid-template-columns: 1fr; padding: 3px; }
-   .play-area { order: 1; grid-template-rows: 46px 48vh auto; }
-   .play-area.history-expanded { grid-template-rows: 98px 48vh auto; }
-  .bets-sidebar { order: 2; height: 430px; }
+   .play-area { order: 1; grid-template-rows: 52px clamp(280px, 37dvh, 330px) auto; }
+   .play-area.history-expanded { grid-template-rows: 98px clamp(280px, 37dvh, 330px) auto; }
+   .bets-sidebar { order: 2; height: 430px; }
   .side-tabs { margin-inline: 36px; }
   .bet-panels { grid-template-columns: 1fr; gap: 5px; }
   .bet-panel { padding: 12px 8px; }
   .bet-tabs { margin-bottom: 10px; }
    .plane-holder { width: 95px; }
+}
+
+@media (max-width: 520px) {
+  .topbar {
+    height: 42px;
+    gap: 8px;
+    padding: 0 7px;
+  }
+
+  .brand { width: 84px; }
+
+  .help {
+    width: 27px;
+    height: 27px;
+    justify-content: center;
+    padding: 0;
+    border-radius: 50%;
+    background: oklch(0.28 0.01 260);
+    color: oklch(0.78 0.01 260);
+  }
+
+  .help svg { width: 18px; height: 18px; }
+  .balance { font-size: 12px; }
+  .balance strong { font-size: 15px; }
+  .menu-button { width: 42px; height: 31px; }
+  .menu-popover { top: 40px; }
+
+  .game-layout { padding: 3px 6px 0; gap: 5px; }
+  .play-area { grid-template-rows: 70px clamp(280px, 37dvh, 330px) auto; gap: 5px; }
+  .play-area.history-expanded { grid-template-rows: 98px clamp(280px, 37dvh, 330px) auto; }
+
+  .history-bar { padding: 7px 7px 0; }
+  .history-list {
+    height: 31px;
+    gap: 5px;
+    padding-right: 54px;
+  }
+  .history-list span {
+    min-width: 46px;
+    padding: 6px 5px;
+    font-size: 11px;
+  }
+  .history-meta { height: 22px; margin-top: 3px; font-size: 11px; }
+  .round-id { font-size: 12px; }
+  .history-actions { top: 7px; right: 7px; height: 24px; }
+  .history-actions button { height: 24px; }
+
+  .flight-stage { border-radius: 16px; }
+  .partners-logo { width: min(270px, 58%); }
+  .round-progress { width: min(220px, 60%); margin-top: 9px; }
+  .official-badge { width: min(118px, 27%); margin-top: 12px; }
+  .plane-holder { width: 92px; }
+
+  .bet-panels { gap: 5px; }
+  .bet-panel {
+    min-height: 166px;
+    padding: 18px 12px 12px;
+    border-radius: 9px;
+  }
+  .bet-tabs {
+    width: min(214px, 62%);
+    height: 28px;
+    margin-bottom: 17px;
+  }
+  .bet-tabs button { font-size: 13px; }
+  .bet-panel-body {
+    grid-template-columns: minmax(135px, 39%) minmax(0, 1fr);
+    gap: 9px;
+    max-width: none;
+  }
+  .stake-row { height: 31px; }
+  .stake-row strong { font-size: 19px; }
+  .quick-grid { gap: 4px; margin-top: 4px; }
+  .quick-grid button { height: 19px; font-size: 12px; }
+  .main-bet {
+    height: 88px;
+    border-radius: 18px;
+  }
+  .main-bet span { font-size: 18px; }
+  .main-bet b { font-size: 21px; line-height: 1.1; }
+
+  .bets-sidebar { height: 430px; }
+  .side-tabs { height: 29px; margin: 4px 22% 0; }
+  .side-tabs button { font-size: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
