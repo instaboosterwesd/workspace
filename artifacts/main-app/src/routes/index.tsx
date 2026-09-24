@@ -536,7 +536,11 @@ function BetPanel({
   };
 
   return (
-    <section className={mode === "Auto" ? "bet-panel auto-mode" : "bet-panel"}>
+    <section className={[
+      "bet-panel",
+      mode === "Auto" ? "auto-mode" : "",
+      waitingForNextRound ? "waiting" : "",
+    ].filter(Boolean).join(" ")}>
       <div className="bet-tabs">
         {(["Bet", "Auto"] as const).map((item) => <button key={item} className={mode === item ? "active" : ""} onClick={() => setMode(item)}>{item}</button>)}
       </div>
