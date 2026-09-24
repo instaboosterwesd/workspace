@@ -828,6 +828,17 @@ function AviatorGame() {
   }, [round]);
 
   useEffect(() => {
+    if (!roundDetailsOpen) return;
+    const closeOnOutsideTouch = (event: PointerEvent) => {
+      const target = event.target as Element | null;
+      if (target?.closest(".round-id, .round-details-card")) return;
+      setRoundDetailsOpen(false);
+    };
+    document.addEventListener("pointerdown", closeOnOutsideTouch);
+    return () => document.removeEventListener("pointerdown", closeOnOutsideTouch);
+  }, [roundDetailsOpen]);
+
+  useEffect(() => {
     if (!loaded || phase !== "crashed") return;
 
     const entryId = `round-${round}`;
@@ -974,7 +985,7 @@ function AviatorGame() {
               {!historyOpen && (
                 <div className="history-meta">
                   <button
-                    className="round-id"
+                    className={roundDetailsOpen ? "round-id active" : "round-id"}
                     onClick={() => {
                       setHistoryOpen(false);
                       setRoundDetailsOpen((value) => !value);
@@ -982,7 +993,7 @@ function AviatorGame() {
                   >
                     <span className="round-id-value">Round ID: {round}</span>
                     <span className="round-id-caret" aria-hidden="true">
-                      {roundDetailsOpen ? <ChevronUp /> : <ChevronDown />}
+                      <ChevronDown />
                     </span>
                   </button>
                   <span>Ping:167ms</span>
