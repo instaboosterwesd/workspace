@@ -759,3 +759,341 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
   .flight-plane.crashing, .multiplier.crashed, .round-intro { animation: none; }
   .flight-plane.crashing { opacity: 0; }
 }
+
+/* Auto play is intentionally denser than the game controls so the complete
+   configuration stays scannable on a phone, like a compact settings sheet. */
+.auto-feedback {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: min(410px, calc(100% - 24px));
+  min-height: 28px;
+  margin: 7px auto 0;
+  padding: 6px 11px;
+  border: 1px solid oklch(0.62 0.18 135 / .65);
+  border-radius: 15px;
+  background: oklch(0.22 0.08 135);
+  color: oklch(0.92 0.04 135);
+  font-size: 11px;
+  line-height: 1.2;
+  animation: auto-feedback-in .22s ease-out both;
+}
+.auto-feedback-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--game-green);
+  box-shadow: 0 0 0 3px oklch(0.7 0.2 135 / .14);
+}
+.auto-play.active {
+  background: oklch(0.58 0.19 135);
+  box-shadow: inset 0 0 0 1px oklch(0.82 0.18 135 / .55);
+}
+.auto-dialog {
+  width: min(528px, calc(100vw - 18px));
+  max-height: min(805px, calc(100dvh - 12px));
+  border: 1px solid oklch(0.28 0.015 260);
+  border-radius: 9px;
+  background: oklch(0.16 0.012 260);
+  box-shadow: 0 24px 70px oklch(0 0 0 / .8);
+}
+.auto-dialog .help-dialog-head {
+  flex-basis: 45px;
+  height: 45px;
+  padding: 0 13px;
+  background: oklch(0.2 0.012 260);
+}
+.auto-dialog .help-dialog-head h2 {
+  color: oklch(0.96 0.01 260);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: .1px;
+}
+.auto-dialog-close {
+  width: 30px !important;
+  height: 30px !important;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: oklch(0.62 0.01 260) !important;
+  font-size: 24px !important;
+  line-height: 1 !important;
+}
+.auto-dialog-close:hover,
+.auto-dialog-close:focus-visible {
+  background: oklch(0.28 0.015 260);
+  color: var(--foreground) !important;
+}
+.auto-dialog-scroll {
+  gap: 7px;
+  padding: 7px 9px 8px;
+  background: oklch(0.13 0.01 260);
+}
+.auto-section,
+.auto-rule {
+  border: 1px solid oklch(0.23 0.012 260);
+  border-radius: 10px;
+  background: oklch(0.2 0.012 260);
+}
+.auto-section {
+  padding: 10px;
+}
+.auto-section-title {
+  margin-bottom: 8px;
+  font-size: 14px;
+  letter-spacing: .05px;
+}
+.round-chips {
+  gap: 6px;
+}
+.round-chips button {
+  height: 32px;
+  border-color: oklch(0.23 0.012 260);
+  background: oklch(0.145 0.01 260);
+  color: oklch(0.62 0.012 260);
+  font-size: 12px;
+  transition: border-color .16s ease, background-color .16s ease, color .16s ease;
+}
+.round-chips button:hover,
+.round-chips button:focus-visible {
+  border-color: oklch(0.55 0.14 135);
+  color: var(--foreground);
+}
+.round-chips button.active {
+  border-color: oklch(0.72 0.2 135);
+  background: oklch(0.3 0.035 260);
+  color: oklch(0.96 0.01 260);
+  box-shadow: inset 0 0 0 1px oklch(0.56 0.16 135 / .5);
+}
+.auto-cash-field {
+  min-height: 35px;
+  gap: 9px;
+  margin-top: 9px;
+  font-size: 14px;
+}
+.auto-cash-value,
+.auto-stepper-core {
+  border: 1px solid oklch(0.08 0.005 260);
+  background: oklch(0.045 0 0);
+  box-shadow: inset 0 1px 0 oklch(0.3 0.01 260 / .18);
+}
+.auto-cash-value {
+  width: 142px;
+  height: 37px;
+  padding-left: 12px;
+}
+.auto-cash-value input {
+  width: 96px;
+  font-size: 19px;
+}
+.auto-cash-value button {
+  color: oklch(0.66 0.01 260);
+}
+.auto-rule {
+  min-height: 61px;
+  padding: 9px 10px;
+  font-size: 14px;
+}
+.auto-rule > span,
+.strategy-row > span {
+  line-height: 1.15;
+}
+.auto-switch {
+  width: 39px;
+  height: 21px;
+  border-color: oklch(0.44 0.01 260);
+  background: oklch(0.27 0.01 260);
+}
+.auto-switch i {
+  width: 15px;
+  height: 15px;
+  background: oklch(0.9 0.1 105);
+}
+.auto-switch.on {
+  background: var(--game-green);
+  border-color: oklch(0.78 0.18 135);
+}
+.auto-switch.on i {
+  transform: translateX(17px);
+}
+.auto-stepper {
+  gap: 5px;
+}
+.auto-stepper-core {
+  width: 129px;
+  height: 37px;
+}
+.auto-stepper-core button {
+  border-color: oklch(0.34 0.01 260);
+}
+.auto-stepper-core strong {
+  font-size: 17px;
+}
+.strategy-section {
+  padding: 9px 10px 10px;
+}
+.strategy-section h3 {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+.strategy-row {
+  min-height: 37px;
+}
+.auto-dialog .auto-actions {
+  flex-basis: 56px;
+  gap: 16px;
+  padding: 9px 10px 10px;
+  background: oklch(0.16 0.012 260);
+}
+.auto-actions button {
+  height: 31px;
+  border: 1px solid transparent;
+  border-radius: 17px;
+  font-size: 14px;
+  font-weight: 700;
+  transition: filter .16s ease, transform .16s ease;
+}
+.auto-actions button:hover,
+.auto-actions button:focus-visible {
+  filter: brightness(1.08);
+}
+.auto-actions button:active {
+  transform: translateY(1px);
+}
+.auto-actions .reset {
+  width: 90px;
+  border-color: oklch(0.84 0.15 75);
+  background: oklch(0.68 0.17 65);
+  color: oklch(0.99 0 0);
+}
+.auto-actions .start {
+  width: min(180px, 48vw);
+  border-color: oklch(0.82 0.18 135);
+  background: oklch(0.63 0.23 135);
+  color: oklch(0.99 0 0);
+}
+.auto-dialog button:focus-visible,
+.auto-dialog input:focus-visible,
+.auto-row button:focus-visible {
+  outline: 2px solid oklch(0.8 0.18 135);
+  outline-offset: 2px;
+}
+@keyframes auto-feedback-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .help-backdrop {
+    place-items: center;
+    padding: 6px 8px;
+  }
+  .auto-dialog {
+    width: calc(100vw - 16px);
+    height: calc(100dvh - 12px);
+    max-height: calc(100dvh - 12px);
+    border-radius: 8px;
+  }
+  .auto-dialog .help-dialog-head {
+    flex-basis: 43px;
+    height: 43px;
+    padding-inline: 12px;
+  }
+  .auto-dialog-scroll {
+    gap: 6px;
+    padding: 6px 8px 7px;
+  }
+  .auto-section,
+  .auto-rule {
+    border-radius: 9px;
+  }
+  .auto-section {
+    padding: 9px 10px;
+  }
+  .round-chips {
+    gap: 5px;
+  }
+  .round-chips button {
+    height: 32px;
+    padding-inline: 2px;
+    font-size: 11px;
+  }
+  .auto-cash-field {
+    gap: 7px;
+    margin-top: 8px;
+    font-size: 13px;
+  }
+  .auto-cash-value {
+    width: 142px;
+  }
+  .auto-rule {
+    min-height: 59px;
+    grid-template-columns: 39px minmax(0, 1fr) auto;
+    gap: 6px;
+    padding: 8px 9px;
+    font-size: 13px;
+  }
+  .auto-stepper-core {
+    width: 126px;
+    height: 36px;
+  }
+  .auto-stepper > span {
+    font-size: 12px;
+  }
+  .strategy-section {
+    padding: 8px 10px 9px;
+  }
+  .strategy-row {
+    min-height: 36px;
+    grid-template-columns: 39px minmax(0, 1fr) auto;
+    gap: 6px;
+    font-size: 13px;
+  }
+  .auto-dialog .auto-actions {
+    flex-basis: 54px;
+    gap: 14px;
+    padding: 8px 10px 9px;
+  }
+  .auto-actions button {
+    height: 31px;
+  }
+  .auto-actions .reset {
+    width: 90px;
+  }
+  .auto-actions .start {
+    width: min(190px, 55vw);
+  }
+}
+
+@media (max-width: 360px) {
+  .auto-dialog .help-dialog-head h2 {
+    font-size: 14px;
+  }
+  .auto-dialog-scroll {
+    padding-inline: 6px;
+  }
+  .auto-section,
+  .auto-rule {
+    padding-inline: 8px;
+  }
+  .round-chips {
+    gap: 3px;
+  }
+  .round-chips button {
+    font-size: 10px;
+  }
+  .auto-rule,
+  .strategy-row {
+    grid-template-columns: 35px minmax(0, 1fr) auto;
+    gap: 4px;
+  }
+  .auto-stepper-core {
+    width: 116px;
+  }
+  .auto-stepper > span {
+    display: none;
+  }
+}

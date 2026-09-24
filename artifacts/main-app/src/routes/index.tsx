@@ -444,6 +444,8 @@ function BetPanel({
   const [autoCashOut, setAutoCashOut] = useState(false);
   const [autoTarget, setAutoTarget] = useState(1.1);
   const [autoOpen, setAutoOpen] = useState(false);
+  const [autoActive, setAutoActive] = useState(false);
+  const [autoFeedback, setAutoFeedback] = useState("");
   const [rounds, setRounds] = useState(100);
   const [stopDecrease, setStopDecrease] = useState(false);
   const [stopIncrease, setStopIncrease] = useState(false);
@@ -490,11 +492,25 @@ function BetPanel({
       : `${money(amount)} INR`;
   const showButtonAmount = !(phase === "intro" && placed);
 
+  const announceAuto = (message: string) => {
+    setAutoFeedback(message);
+    window.setTimeout(() => setAutoFeedback(""), 3400);
+  };
+
   useEffect(() => {
     setPlaced(waitingForNextRound);
     setWaitingForNextRound(false);
     setCashoutResult(null);
   }, [round]);
+
+  useEffect(() => {
+    if (!autoOpen) return;
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setAutoOpen(false);
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [autoOpen]);
 
   const handleMainBet = () => {
     if (phase === "intro") {
@@ -559,32 +575,63 @@ function BetPanel({
       </div>
       {mode === "Auto" && (
         <div className="auto-row">
-          <button className="auto-play" onClick={() => setAutoOpen(true)}>AUTO PLAY</button>
+          <button
+            className={autoActive ? "auto-play active" : "auto-play"}
+            aria-label={autoActive ? "Edit active auto play options" : "Open auto play options"}
+            onClick={() => setAutoOpen(true)}
+          >
+            {autoActive ? "AUTO ACTIVE" : "AUTO PLAY"}
+          </button>
           <div className="auto-cashout">
             <span>Auto Cash Out</span>
-            <button className={autoCashOut ? "switch on" : "switch"} aria-pressed={autoCashOut} aria-label="Auto cash out" onClick={() => setAutoCashOut(!autoCashOut)}><i /></button>
+            <button
+              className={autoCashOut ? "switch on" : "switch"}
+              aria-pressed={autoCashOut}
+              aria-label="Auto cash out"
+              onClick={() => {
+                const next = !autoCashOut;
+                setAutoCashOut(next);
+                announceAuto(next ? `Auto cash out enabled at ${autoTarget.toFixed(1)}x.` : "Auto cash out disabled.");
+              }}
+            ><i /></button>
             <strong>
               <span>{autoTarget.toFixed(1)}</span>
-              <button className="auto-clear" aria-label="Clear auto cash out" onClick={() => setAutoCashOut(false)}>×</button>
+              <button
+                className="auto-clear"
+                aria-label="Clear auto cash out"
+                onClick={() => {
+                  setAutoCashOut(false);
+                  announceAuto("Auto cash out cleared.");
+                }}
+              >×</button>
             </strong>
           </div>
+        </div>
+      )}
+      {autoFeedback && (
+        <div className="auto-feedback" role="status" aria-live="polite">
+          <span className="auto-feedback-dot" aria-hidden="true" />
+          {autoFeedback}
         </div>
       )}
       {autoOpen && (
         <div className="help-backdrop" onClick={() => setAutoOpen(false)}>
           <section className="help-dialog auto-dialog" role="dialog" aria-modal="true" aria-labelledby="auto-play-title" onClick={(event) => event.stopPropagation()}>
-            <div className="help-dialog-head"><h2 id="auto-play-title">Auto Play Options</h2><button aria-label="Close" onClick={() => setAutoOpen(false)}>×</button></div>
+            <div className="help-dialog-head">
+              <h2 id="auto-play-title">Auto Play Options</h2>
+              <button className="auto-dialog-close" aria-label="Close auto play options" onClick={() => setAutoOpen(false)}>×</button>
+            </div>
             <div className="auto-dialog-scroll">
               <section className="auto-section rounds-section">
                 <p className="auto-section-title">Number of rounds:</p>
                 <div className="round-chips">
-                  {[10, 20, 50, 100, 500, 1000].map((value) => <button key={value} className={rounds === value ? "active" : ""} onClick={() => setRounds(value)}>{value}</button>)}
+                  {[10, 20, 50, 100, 5000, 10000].map((value) => <button key={value} className={rounds === value ? "active" : ""} aria-pressed={rounds === value} onClick={() => setRounds(value)}>{value}</button>)}
                 </div>
                 <div className="auto-cash-field">
                   <span>Auto Cash Out:</span>
                   <div className="auto-cash-value">
-                    <input aria-label="Auto cash out value" value={autoTarget} onChange={(event) => setAutoTarget(Number(event.target.value) || 1)} />
-                    <button aria-label="Clear auto cash out" onClick={() => setAutoTarget(1.1)}>×</button>
+                    <input aria-label="Auto cash out multiplier" type="number" min="1.1" max="1000" step="0.1" value={autoTarget} onChange={(event) => setAutoTarget(clamp(Number(event.target.value) || 1.1, 1.1, 1000))} />
+                    <button aria-label="Reset auto cash out multiplier" onClick={() => setAutoTarget(1.1)}>×</button>
                   </div>
                 </div>
               </section>
@@ -617,8 +664,40 @@ function BetPanel({
               </section>
             </div>
             <div className="auto-actions">
-              <button className="reset" onClick={() => setAutoOpen(false)}>Reset</button>
-              <button className="start" onClick={() => setAutoOpen(false)}>Start</button>
+              <button
+                className="reset"
+                onClick={() => {
+                  setRounds(100);
+                  setAutoTarget(1.1);
+                  setAutoCashOut(false);
+                  setStopDecrease(false);
+                  setStopIncrease(false);
+                  setStopSingleWin(false);
+                  setLoseReturn(true);
+                  setLoseIncrease(false);
+                  setLoseDecrease(false);
+                  setWinReturn(true);
+                  setWinIncrease(false);
+                  setWinDecrease(false);
+                  setStopDecreaseValue(0);
+                  setStopIncreaseValue(0);
+                  setStopSingleWinValue(0);
+                  setLoseIncreaseValue(100);
+                  setLoseDecreaseValue(50);
+                  setWinIncreaseValue(100);
+                  setWinDecreaseValue(50);
+                  setAutoActive(false);
+                  announceAuto("Auto play options reset.");
+                }}
+              >Reset</button>
+              <button
+                className="start"
+                onClick={() => {
+                  setAutoActive(true);
+                  setAutoOpen(false);
+                  announceAuto(`Auto play started for ${rounds.toLocaleString()} rounds.`);
+                }}
+              >Start</button>
             </div>
           </section>
         </div>
