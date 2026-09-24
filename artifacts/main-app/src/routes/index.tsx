@@ -44,6 +44,7 @@ const flightDurationMs = 45000;
 const curveProgressExponent = 1.18;
 const curveRiseExponent = 1.7;
 const graphStartX = 2.6;
+const mobileGraphStartX = 7.4;
 const graphBaselineY = 95;
 const upperTarget = { x: 77, y: 17.1 };
 const lowerTarget = { x: 87.7, y: 28.6 };
@@ -181,11 +182,12 @@ function curveControlsAt(
   currentProgress: number,
   crashAt: number,
   resolveEndpoint: EndpointResolver = endpointStateAt,
+  startX = graphStartX,
 ) {
   const endpoint = resolveEndpoint(currentProgress, crashAt);
-  const endpointWidth = endpoint.x - graphStartX;
+  const endpointWidth = endpoint.x - startX;
   const startControl = {
-    x: graphStartX + endpointWidth * 0.28,
+    x: startX + endpointWidth * 0.28,
     y: graphBaselineY,
   };
   const endControlDistance = endpointWidth * 0.18;
@@ -758,19 +760,20 @@ function AviatorGame() {
     () => endpointResolver(flight, crashAt),
     [endpointResolver, flight, crashAt],
   );
+  const graphStart = isMobileGraph ? mobileGraphStartX : graphStartX;
   const lineEnd = useMemo(() => ({
     x: curveEnd.x + 0.75,
     y: curveEnd.y + 0.35,
   }), [curveEnd]);
   const curve = useMemo(() => {
-    const { startControl, endControl } = curveControlsAt(flight, crashAt, endpointResolver);
+    const { startControl, endControl } = curveControlsAt(flight, crashAt, endpointResolver, graphStart);
     return [
-      `M ${graphStartX.toFixed(2)} ${graphBaselineY.toFixed(2)}`,
+      `M ${graphStart.toFixed(2)} ${graphBaselineY.toFixed(2)}`,
       `C ${startControl.x.toFixed(2)} ${startControl.y.toFixed(2)}`,
       `${endControl.x.toFixed(2)} ${endControl.y.toFixed(2)}`,
       `${curveEnd.x.toFixed(2)} ${curveEnd.y.toFixed(2)}`,
     ].join(" ");
-  }, [endpointResolver, flight, crashAt, curveEnd]);
+  }, [endpointResolver, flight, crashAt, curveEnd, graphStart]);
   const flightPath = useMemo(
     () => `${curve} L ${lineEnd.x.toFixed(2)} ${lineEnd.y.toFixed(2)}`,
     [curve, lineEnd],
@@ -916,7 +919,7 @@ function AviatorGame() {
                   <feGaussianBlur stdDeviation="1.7" />
                 </filter>
               </defs>
-              <path d={`${flightPath} L ${lineEnd.x.toFixed(2)} ${graphBaselineY.toFixed(2)} L ${graphStartX.toFixed(2)} ${graphBaselineY.toFixed(2)} Z`} fill="url(#flightFill)" />
+              <path d={`${flightPath} L ${lineEnd.x.toFixed(2)} ${graphBaselineY.toFixed(2)} L ${graphStart.toFixed(2)} ${graphBaselineY.toFixed(2)} Z`} fill="url(#flightFill)" />
               <path d={flightPath} fill="none" stroke="var(--plane-red)" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" opacity="0.28" filter="url(#flightStrokeOuterGlow)" vectorEffect="non-scaling-stroke" />
               <path d={flightPath} fill="none" stroke="var(--plane-red)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" opacity="0.5" vectorEffect="non-scaling-stroke" />
               <path d={flightPath} fill="none" stroke="var(--plane-red)" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />

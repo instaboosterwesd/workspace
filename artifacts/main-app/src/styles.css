@@ -710,6 +710,11 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
   .round-progress { width: min(220px, 60%); margin-top: 9px; }
   .official-badge { width: min(118px, 27%); margin-top: 12px; }
   .plane-holder { width: 92px; }
+  .plane-holder.intro-position {
+    left: 4.5%;
+    bottom: 10%;
+    width: 96px;
+  }
 
   .bet-panels {
     height: auto;
