@@ -47,6 +47,8 @@ const graphStartX = 2.6;
 const graphBaselineY = 95;
 const upperTarget = { x: 77, y: 17.1 };
 const lowerTarget = { x: 87.7, y: 28.6 };
+const mobileUpperTarget = { x: 67.5, y: 17.1 };
+const mobileLowerTarget = { x: 78.5, y: 28.6 };
 const upperTangentSlope = -0.82;
 const lowerTangentSlope = -0.61;
 const upperTouchMultiplier = 1.7;
@@ -157,8 +159,8 @@ function mobileEndpointStateAt(progress: number, crashAt: number): EndpointState
   const bounceProgress = (multiplier - upperTouchMultiplier) / bounceStep;
   const segmentIndex = Math.floor(bounceProgress);
   const startsAtUpper = segmentIndex % 2 === 0;
-  const from = startsAtUpper ? upperTarget : lowerTarget;
-  const to = startsAtUpper ? lowerTarget : upperTarget;
+  const from = startsAtUpper ? mobileUpperTarget : mobileLowerTarget;
+  const to = startsAtUpper ? mobileLowerTarget : mobileUpperTarget;
   const transition = smoothStep(bounceProgress - segmentIndex);
 
   return {
@@ -166,8 +168,8 @@ function mobileEndpointStateAt(progress: number, crashAt: number): EndpointState
     y: lerp(from.y, to.y, transition),
     multiplier,
     tangentSlope: lerp(
-      from === upperTarget ? upperTangentSlope : lowerTangentSlope,
-      to === upperTarget ? upperTangentSlope : lowerTangentSlope,
+      from === mobileUpperTarget ? upperTangentSlope : lowerTangentSlope,
+      to === mobileUpperTarget ? upperTangentSlope : lowerTangentSlope,
       transition,
     ),
   };
