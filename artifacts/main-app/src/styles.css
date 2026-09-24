@@ -350,6 +350,7 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
     grid-template-rows: 52px clamp(280px, 37dvh, 330px);
     min-height: 0;
   }
+  .game-frame-shell > .flight-stage { grid-row: 2; }
   .history-bar.open {
     position: absolute;
     inset: 0 0 auto;

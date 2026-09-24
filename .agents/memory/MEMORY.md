@@ -5,3 +5,4 @@
 - [Aviator stage colors](aviator-stage-colors.md) — flight glow uses exact multiplier bands: blue below 2x, purple from 2x to below 10x, pink at 10x and above.
 - [Aviator betting flow](aviator-betting-flow.md) — each panel has an independent per-round bet, live cash-out payout, crash loss, and frozen win result.
 - [Aviator history motion](aviator-history-motion.md) — a new multiplier enters from the left while the existing chips shift right together, then settle.
+- [History overlay grid row](history-overlay-grid-row.md) — an absolute first grid child leaves flow; explicitly assign the underlying stage to its intended row.
