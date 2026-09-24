@@ -540,6 +540,7 @@ function BetPanel({
       "bet-panel",
       mode === "Auto" ? "auto-mode" : "",
       waitingForNextRound ? "waiting" : "",
+      isFlyingBet ? "cash-out-active" : "",
     ].filter(Boolean).join(" ")}>
       <div className="bet-tabs">
         {(["Bet", "Auto"] as const).map((item) => <button key={item} className={mode === item ? "active" : ""} onClick={() => setMode(item)}>{item}</button>)}
