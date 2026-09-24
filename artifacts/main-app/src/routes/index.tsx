@@ -771,25 +771,26 @@ function AviatorGame() {
         </aside>
 
         <section className={historyOpen ? "play-area history-expanded" : "play-area"}>
-          <div className={historyOpen ? "history-bar open" : "history-bar"}>
-            {historyOpen && <strong className="history-title">ROUND HISTORY</strong>}
-            <div
-              className={historyAnimatingId ? "history-list history-list-animating" : "history-list"}
-              key={historyAnimatingId ?? "history-stable"}
-            >
-              {historyEntries.map((entry) => <span className={historyTone(entry.value)} key={entry.id}>{entry.value}</span>)}
-            </div>
-            {!historyOpen && (
-              <div className="history-meta">
-                <button className="round-id" onClick={() => setHistoryOpen((value) => !value)}>Round ID: {round}<ChevronDown /></button>
-                <span>Ping:167ms</span>
+          <div className="game-frame-shell">
+            <div className={historyOpen ? "history-bar open" : "history-bar"}>
+              {historyOpen && <strong className="history-title">ROUND HISTORY</strong>}
+              <div
+                className={historyAnimatingId ? "history-list history-list-animating" : "history-list"}
+                key={historyAnimatingId ?? "history-stable"}
+              >
+                {historyEntries.map((entry) => <span className={historyTone(entry.value)} key={entry.id}>{entry.value}</span>)}
               </div>
-            )}
-            <div className="history-actions">
-              <button className={historyOpen ? "history-toggle active" : "history-toggle"} aria-label={historyOpen ? "Close round history" : "Open round history"} aria-expanded={historyOpen} onClick={() => setHistoryOpen((value) => !value)}><History /><ChevronDown /></button>
+              {!historyOpen && (
+                <div className="history-meta">
+                  <button className="round-id" onClick={() => setHistoryOpen((value) => !value)}>Round ID: {round}<ChevronDown /></button>
+                  <span>Ping:167ms</span>
+                </div>
+              )}
+              <div className="history-actions">
+                <button className={historyOpen ? "history-toggle active" : "history-toggle"} aria-label={historyOpen ? "Close round history" : "Open round history"} aria-expanded={historyOpen} onClick={() => setHistoryOpen((value) => !value)}><History /><ChevronDown /></button>
+              </div>
             </div>
-          </div>
-          <div className={`flight-stage tone-${multiplierTone(multiplier)} phase-${phase} border-t-[0.8px] border-r-[0.8px] border-b-[0.8px] border-l-[0.8px] rounded-tl-[15px] rounded-tr-[15px] rounded-br-[15px] rounded-bl-[15px]`}>
+            <div className={`flight-stage tone-${multiplierTone(multiplier)} phase-${phase} border-t-[0.8px] border-r-[0.8px] border-b-[0.8px] border-l-[0.8px] rounded-tl-[15px] rounded-tr-[15px] rounded-br-[15px] rounded-bl-[15px]`}>
             <div className="radial-rays" />
             <div className="stage-glow" style={{ opacity: phase === "flying" ? Math.min(1, 0.4 + flight) : 0 }} />
             {phase === "flying" && (
@@ -849,6 +850,7 @@ function AviatorGame() {
                 style={phase !== "intro" ? { left: `${curveEnd.x}%`, bottom: `${100 - curveEnd.y}%` } : undefined}
             >
               <PlaneAnimation animationOn={animationOn} {...(phase === "flying" ? { label: "Flying airplane" } : {})} />
+            </div>
             </div>
           </div>
           <div className="bet-panels">
