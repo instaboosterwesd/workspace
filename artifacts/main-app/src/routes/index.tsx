@@ -161,13 +161,23 @@ function mobileEndpointStateAt(
     };
   }
 
-  const bounceStep = 0.5;
-  const bounceProgress = (multiplier - upperTouchMultiplier) / bounceStep;
-  const segmentIndex = Math.floor(bounceProgress);
+  // Keep the plane's visual movement tied to wall-clock time, not to the
+  // exponentially accelerating multiplier. This keeps the 1.70x -> ~2.20x
+  // movement speed unchanged even when the number reaches 10x or higher.
+  const upperTouchElapsed = flightDurationForTarget(crashAt)
+    * Math.log(upperTouchMultiplier)
+    / Math.log(crashAt);
+  const movementElapsed = Math.max(
+    0,
+    safeProgress * flightDurationForTarget(crashAt) - upperTouchElapsed,
+  );
+  const segmentIndex = Math.floor(movementElapsed / endpointSegmentDurationMs);
   const startsAtUpper = segmentIndex % 2 === 0;
   const from = startsAtUpper ? mobileUpperTarget : mobileLowerTarget;
   const to = startsAtUpper ? mobileLowerTarget : mobileUpperTarget;
-  const transition = smoothStep(bounceProgress - segmentIndex);
+  const transition = smoothStep(
+    (movementElapsed % endpointSegmentDurationMs) / endpointSegmentDurationMs,
+  );
 
   return {
     x: lerp(from.x, to.x, transition),
