@@ -135,7 +135,12 @@ function endpointStateAt(
   };
 }
 
-function mobileEndpointStateAt(progress: number, crashAt: number): EndpointState {
+function mobileEndpointStateAt(
+  progress: number,
+  crashAt: number,
+  baselineY = graphBaselineY,
+  startX = graphStartX,
+): EndpointState {
   const safeProgress = clamp(progress, 0, 1);
   const multiplier = Math.pow(crashAt, safeProgress);
 
@@ -149,8 +154,8 @@ function mobileEndpointStateAt(progress: number, crashAt: number): EndpointState
     const upwardProgress = Math.pow(horizontalProgress, curveRiseExponent);
 
     return {
-      x: lerp(graphStartX, mobileUpperTarget.x, horizontalProgress),
-      y: lerp(graphBaselineY, mobileUpperTarget.y, upwardProgress),
+      x: lerp(startX, mobileUpperTarget.x, horizontalProgress),
+      y: lerp(baselineY, mobileUpperTarget.y, upwardProgress),
       multiplier,
       tangentSlope: lerp(-0.18, upperTangentSlope, smoothStep(riseProgress)),
     };
@@ -183,12 +188,13 @@ function curveControlsAt(
   crashAt: number,
   resolveEndpoint: EndpointResolver = endpointStateAt,
   startX = graphStartX,
+  baselineY = graphBaselineY,
 ) {
   const endpoint = resolveEndpoint(currentProgress, crashAt);
   const endpointWidth = endpoint.x - startX;
   const startControl = {
     x: startX + endpointWidth * 0.28,
-    y: graphBaselineY,
+    y: baselineY,
   };
   const endControlDistance = endpointWidth * 0.18;
   const endControl = {
@@ -755,20 +761,23 @@ function AviatorGame() {
   // track arrives from below-left, then turns slightly up-right into the
   // plane's rear underside hook. The plane itself must not be shifted to fake
   // that join.
-  const endpointResolver = isMobileGraph ? mobileEndpointStateAt : endpointStateAt;
+  const graphStart = isMobileGraph ? mobileGraphStartX : graphStartX;
+  const graphBaseline = isMobileGraph ? 90 : graphBaselineY;
+  const endpointResolver: EndpointResolver = isMobileGraph
+    ? (progress, target) => mobileEndpointStateAt(progress, target, graphBaseline, graphStart)
+    : endpointStateAt;
   const curveEnd = useMemo(
     () => endpointResolver(flight, crashAt),
     [endpointResolver, flight, crashAt],
   );
-  const graphStart = isMobileGraph ? mobileGraphStartX : graphStartX;
   const lineEnd = useMemo(() => ({
     x: curveEnd.x + 0.75,
     y: curveEnd.y + 0.35,
   }), [curveEnd]);
   const curve = useMemo(() => {
-    const { startControl, endControl } = curveControlsAt(flight, crashAt, endpointResolver, graphStart);
+    const { startControl, endControl } = curveControlsAt(flight, crashAt, endpointResolver, graphStart, graphBaseline);
     return [
-      `M ${graphStart.toFixed(2)} ${graphBaselineY.toFixed(2)}`,
+      `M ${graphStart.toFixed(2)} ${graphBaseline.toFixed(2)}`,
       `C ${startControl.x.toFixed(2)} ${startControl.y.toFixed(2)}`,
       `${endControl.x.toFixed(2)} ${endControl.y.toFixed(2)}`,
       `${curveEnd.x.toFixed(2)} ${curveEnd.y.toFixed(2)}`,
@@ -919,7 +928,7 @@ function AviatorGame() {
                   <feGaussianBlur stdDeviation="1.7" />
                 </filter>
               </defs>
-              <path d={`${flightPath} L ${lineEnd.x.toFixed(2)} ${graphBaselineY.toFixed(2)} L ${graphStart.toFixed(2)} ${graphBaselineY.toFixed(2)} Z`} fill="url(#flightFill)" />
+              <path d={`${flightPath} L ${lineEnd.x.toFixed(2)} ${graphBaseline.toFixed(2)} L ${graphStart.toFixed(2)} ${graphBaseline.toFixed(2)} Z`} fill="url(#flightFill)" />
               <path d={flightPath} fill="none" stroke="var(--plane-red)" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" opacity="0.28" filter="url(#flightStrokeOuterGlow)" vectorEffect="non-scaling-stroke" />
               <path d={flightPath} fill="none" stroke="var(--plane-red)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" opacity="0.5" vectorEffect="non-scaling-stroke" />
               <path d={flightPath} fill="none" stroke="var(--plane-red)" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
