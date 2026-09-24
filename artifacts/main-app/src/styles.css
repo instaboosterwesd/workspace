@@ -335,9 +335,69 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
   .topbar { position: sticky; top: 0; }
   .help span { display: none; }
   .game-layout { height: auto; grid-template-columns: 1fr; padding: 3px; }
-   .play-area { order: 1; grid-template-rows: 52px clamp(280px, 37dvh, 330px) auto; }
-   .play-area.history-expanded { grid-template-rows: 98px clamp(280px, 37dvh, 330px) auto; }
-   .bets-sidebar { order: 2; height: 430px; }
+  .play-area {
+    order: 1;
+    position: relative;
+    isolation: isolate;
+    grid-template-rows: auto auto;
+    overflow: visible;
+  }
+  .play-area.history-expanded { grid-template-rows: auto auto; }
+  .game-frame-shell {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-rows: 52px clamp(280px, 37dvh, 330px);
+    min-height: 0;
+  }
+  .history-bar.open {
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: 50;
+    width: 100%;
+    height: min(308px, calc(100dvh - 110px));
+    padding: 8px;
+    border-radius: 0 0 15px 15px;
+    background: oklch(0.15 0.015 260);
+    box-shadow: 0 14px 24px rgb(0 0 0 / .42);
+  }
+  .history-bar.open .history-title {
+    top: 10px;
+    left: 8px;
+    font-size: 14px;
+    letter-spacing: 0;
+  }
+  .history-bar.open .history-actions {
+    top: 7px;
+    right: 8px;
+    height: 26px;
+    padding-inline: 7px;
+    background: oklch(0.19 0.015 260);
+  }
+  .history-bar.open .history-actions button {
+    height: 26px;
+    color: var(--game-red);
+  }
+  .history-bar.open .history-list {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    align-content: start;
+    gap: 6px 8px;
+    height: calc(100% - 33px);
+    margin-top: 29px;
+    padding-right: 0;
+    overflow-y: auto;
+    scrollbar-width: none;
+    white-space: normal;
+  }
+  .history-bar.open .history-list::-webkit-scrollbar { display: none; }
+  .history-bar.open .history-list span {
+    min-width: 0;
+    padding: 5px 4px;
+    border-radius: 12px;
+    font-size: 11px;
+  }
+  .bets-sidebar { order: 2; height: 430px; }
   .side-tabs { margin-inline: 36px; }
   .bet-panels { grid-template-columns: 1fr; gap: 5px; }
   .bet-panel { padding: 12px 8px; }
@@ -392,13 +452,6 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
     height: auto;
     min-height: 0;
     grid-template-rows: auto auto;
-  }
-  .game-frame-shell {
-    position: relative;
-    isolation: isolate;
-    display: grid;
-    grid-template-rows: 70px clamp(280px, 37dvh, 330px);
-    min-height: 0;
   }
 
   .history-bar { padding: 7px 7px 0; }
