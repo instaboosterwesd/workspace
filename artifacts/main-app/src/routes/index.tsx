@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ChevronDown, Gamepad2, HelpCircle, History, Languages, Menu, Minus, Music2, Plus, ShieldCheck, Sparkles, UserRound, Volume2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Copy, Gamepad2, HelpCircle, History, Languages, Laptop, LockKeyhole, Menu, Minus, Music2, Plus, Server, ShieldCheck, Sparkles, UserRound, Volume2, X } from "lucide-react";
 
 import loadingAsset from "../assets/aviator/loading.png.asset.json";
 import wordmarkAsset from "../assets/aviator/wordmark.svg.asset.json";
@@ -247,6 +247,68 @@ function makeRoundBets(seed: number): LiveBet[] {
 }
 
 const money = (value: number) => value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const provablyFairSeed = "n5s1EowOQ8XZ9cz2NEMas1NqV2wN";
+const resultCipher = "3856742f2002452d4a8a06cd5f620c14327e8bad4cfbe2ca79acfb5a4f064cf4";
+
+type RoundDetailsCardProps = {
+  round: number;
+  phase: FlightPhase;
+  crashAt: number;
+  copied: boolean;
+  onClose: () => void;
+  onCopy: () => void;
+  onValidate: () => void;
+};
+
+function RoundDetailsCard({ round, phase, crashAt, copied, onClose, onCopy, onValidate }: RoundDetailsCardProps) {
+  const resultReady = phase === "crashed";
+
+  return (
+    <div className="round-details-card" role="dialog" aria-label="Round details">
+      <button className="round-details-close" aria-label="Close round details" onClick={onClose}><X /></button>
+      <div className="round-detail-line"><span>Round ID:</span><strong>{round}</strong></div>
+      <div className="round-detail-line"><span>Original Seed:</span><strong>{resultReady ? provablyFairSeed : ""}</strong></div>
+      <div className="round-detail-line"><span>Result:</span><strong>{resultReady ? `${crashAt.toFixed(2)}x` : ""}</strong></div>
+      <div className="round-detail-line cipher"><span>Result Cipher:</span><strong>{resultCipher}</strong></div>
+      <div className="round-details-actions">
+        <button className="round-copy-button" onClick={onCopy}><Copy />{copied ? "Copied" : "Copy"}</button>
+        <button className={resultReady ? "round-validate-button ready" : "round-validate-button"} disabled={!resultReady} onClick={onValidate}>Validate</button>
+      </div>
+    </div>
+  );
+}
+
+type FairDetailsDialogProps = {
+  round: number;
+  crashAt: number;
+  copied: boolean;
+  onClose: () => void;
+  onCopy: () => void;
+};
+
+function FairDetailsDialog({ round, crashAt, copied, onClose, onCopy }: FairDetailsDialogProps) {
+  const result = `${crashAt.toFixed(2)}x`;
+  const resultWithSeed = `${provablyFairSeed}${result}`;
+
+  return (
+    <div className="fair-details-backdrop" role="presentation">
+      <section className="fair-details-dialog" role="dialog" aria-label="Provably fair result">
+        <header className="fair-details-head">
+          <div><strong>Round ID:{round}</strong><span>{result}</span><small>08:22:43</small></div>
+          <button className="fair-details-copy" onClick={onCopy}><Copy />{copied ? "Copied" : "Copy"}</button>
+          <button className="fair-details-close" aria-label="Close provably fair details" onClick={onClose}><X /></button>
+        </header>
+        <div className="fair-details-body">
+          <div className="fair-detail-section"><Server /><div><strong>Seed:</strong><span>Generated before the game starts</span><b>{provablyFairSeed}</b></div></div>
+          <div className="fair-detail-section"><Laptop /><div><strong>Game Result: {result}</strong></div></div>
+          <div className="fair-detail-section"><Server /><div><strong>Original Seed plus game result characters:</strong><b>{resultWithSeed}</b></div></div>
+          <div className="fair-detail-section"><LockKeyhole /><div><strong>Encrypted by SHA256:</strong><span>It is obtained by encrypting the seed plus game result string with SHA256.</span><b>{resultCipher}</b></div></div>
+        </div>
+        <footer className="fair-details-foot">For instructions check <strong>What is Provably Fair</strong></footer>
+      </section>
+    </div>
+  );
+}
 
 const history = [
   "1.00x", "1.26x", "1.24x", "9.13x", "1.01x", "1.50x", "4.55x", "7.15x", "1.14x", "1.50x", "7.04x", "1.02x", "4.34x", "1.92x", "1.32x", "11.11x", "2.66x", "5.64x",
@@ -552,6 +614,9 @@ function AviatorGame() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [roundDetailsOpen, setRoundDetailsOpen] = useState(false);
+  const [fairDetailsOpen, setFairDetailsOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [soundOn, setSoundOn] = useState(false);
   const [musicOn, setMusicOn] = useState(false);
   const [animationOn, setAnimationOn] = useState(true);
@@ -562,6 +627,16 @@ function AviatorGame() {
   ));
   const [historyAnimatingId, setHistoryAnimatingId] = useState<string | null>(null);
   const [isMobileGraph, setIsMobileGraph] = useState(false);
+
+  const copyFairData = async () => {
+    try {
+      await navigator.clipboard?.writeText(resultCipher);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1400);
+    } catch {
+      setCopied(false);
+    }
+  };
 
   useEffect(() => {
     const media = window.matchMedia("(max-width: 520px)");
@@ -639,6 +714,12 @@ function AviatorGame() {
     setCashoutNotice(null);
     setLiveBets(makeRoundBets(round));
   }, [round, loaded]);
+
+  useEffect(() => {
+    setRoundDetailsOpen(false);
+    setFairDetailsOpen(false);
+    setCopied(false);
+  }, [round]);
 
   useEffect(() => {
     if (!loaded || phase !== "crashed") return;
@@ -782,12 +863,30 @@ function AviatorGame() {
               </div>
               {!historyOpen && (
                 <div className="history-meta">
-                  <button className="round-id" onClick={() => setHistoryOpen((value) => !value)}>Round ID: {round}<ChevronDown /></button>
+                  <button
+                    className="round-id"
+                    onClick={() => {
+                      setHistoryOpen(false);
+                      setRoundDetailsOpen((value) => !value);
+                    }}
+                  >
+                    Round ID: {round}{roundDetailsOpen ? <ChevronUp /> : <ChevronDown />}
+                  </button>
                   <span>Ping:167ms</span>
                 </div>
               )}
               <div className="history-actions">
-                <button className={historyOpen ? "history-toggle active" : "history-toggle"} aria-label={historyOpen ? "Close round history" : "Open round history"} aria-expanded={historyOpen} onClick={() => setHistoryOpen((value) => !value)}><History /><ChevronDown /></button>
+                <button
+                  className={historyOpen ? "history-toggle active" : "history-toggle"}
+                  aria-label={historyOpen ? "Close round history" : "Open round history"}
+                  aria-expanded={historyOpen}
+                  onClick={() => {
+                    setRoundDetailsOpen(false);
+                    setHistoryOpen((value) => !value);
+                  }}
+                >
+                  <History /><ChevronDown />
+                </button>
               </div>
             </div>
             <div className={`flight-stage tone-${multiplierTone(multiplier)} phase-${phase} border-t-[0.8px] border-r-[0.8px] border-b-[0.8px] border-l-[0.8px] rounded-tl-[15px] rounded-tr-[15px] rounded-br-[15px] rounded-bl-[15px]`}>
@@ -853,12 +952,35 @@ function AviatorGame() {
             </div>
             </div>
           </div>
+          {roundDetailsOpen && (
+            <RoundDetailsCard
+              round={round}
+              phase={phase}
+              crashAt={crashAt}
+              copied={copied}
+              onClose={() => setRoundDetailsOpen(false)}
+              onCopy={copyFairData}
+              onValidate={() => {
+                setRoundDetailsOpen(false);
+                setFairDetailsOpen(true);
+              }}
+            />
+          )}
           <div className="bet-panels">
             <BetPanel initial={90} phase={phase} multiplier={multiplier} round={round} onCashOut={setCashoutNotice} />
             <BetPanel initial={10} phase={phase} multiplier={multiplier} round={round} onCashOut={setCashoutNotice} />
           </div>
         </section>
       </div>
+      {fairDetailsOpen && (
+        <FairDetailsDialog
+          round={round}
+          crashAt={crashAt}
+          copied={copied}
+          onClose={() => setFairDetailsOpen(false)}
+          onCopy={copyFairData}
+        />
+      )}
 
       {helpOpen && (
         <div className="help-backdrop" role="presentation" onClick={() => setHelpOpen(false)}>
