@@ -370,10 +370,14 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
   .menu-popover { top: 40px; }
 
   .game-layout { padding: 3px 6px 0; gap: 5px; }
-  .play-area { grid-template-rows: 70px clamp(280px, 37dvh, 330px) auto; gap: 5px; }
+  .play-area {
+    min-height: calc(70px + clamp(280px, 37dvh, 330px) + 337px + 10px);
+    grid-template-rows: 70px clamp(280px, 37dvh, 330px) minmax(337px, auto);
+    gap: 5px;
+  }
   .play-area.history-expanded {
     position: relative;
-    grid-template-rows: 70px clamp(280px, 37dvh, 330px) auto;
+    grid-template-rows: 70px clamp(280px, 37dvh, 330px) minmax(337px, auto);
   }
 
   .history-bar { padding: 7px 7px 0; }
@@ -444,7 +448,10 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
   .official-badge { width: min(118px, 27%); margin-top: 12px; }
   .plane-holder { width: 92px; }
 
-  .bet-panels { gap: 5px; }
+  .bet-panels {
+    min-height: 337px;
+    gap: 5px;
+  }
   .bet-panel {
     min-height: 166px;
     padding: 18px 12px 12px;
