@@ -374,6 +374,7 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
     min-height: calc(70px + clamp(280px, 37dvh, 330px) + 337px + 10px);
     grid-template-rows: 70px clamp(280px, 37dvh, 330px) minmax(337px, auto);
     gap: 5px;
+    overflow: visible;
   }
   .play-area.history-expanded {
     position: relative;
@@ -450,7 +451,9 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
   .plane-holder { width: 92px; }
 
   .bet-panels {
+    height: 337px;
     min-height: 337px;
+    grid-template-rows: repeat(2, minmax(166px, 1fr));
     gap: 5px;
   }
   .bet-panel {
