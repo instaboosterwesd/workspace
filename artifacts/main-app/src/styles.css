@@ -451,6 +451,9 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
     min-height: 0;
     grid-template-rows: auto auto;
   }
+  .game-frame-shell {
+    grid-template-rows: 70px clamp(280px, 37dvh, 330px);
+  }
 
   .history-bar { padding: 7px 7px 0; }
   .history-list {
