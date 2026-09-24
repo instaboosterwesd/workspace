@@ -371,7 +371,10 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 
   .game-layout { padding: 3px 6px 0; gap: 5px; }
   .play-area { grid-template-rows: 70px clamp(280px, 37dvh, 330px) auto; gap: 5px; }
-  .play-area.history-expanded { grid-template-rows: 98px clamp(280px, 37dvh, 330px) auto; }
+  .play-area.history-expanded {
+    position: relative;
+    grid-template-rows: 70px clamp(280px, 37dvh, 330px) auto;
+  }
 
   .history-bar { padding: 7px 7px 0; }
   .history-list {
@@ -388,6 +391,52 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
   .round-id { font-size: 12px; }
   .history-actions { top: 7px; right: 7px; height: 24px; }
   .history-actions button { height: 24px; }
+  .history-toggle.active { color: var(--game-red); }
+  .history-bar.open {
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: 10;
+    width: 100%;
+    height: min(308px, calc(100dvh - 110px));
+    padding: 8px 8px 9px;
+    border-radius: 0 0 15px 15px;
+    background: oklch(0.15 0.015 260);
+    box-shadow: 0 14px 24px rgb(0 0 0 / .42);
+  }
+  .history-bar.open .history-title {
+    top: 10px;
+    left: 8px;
+    font-size: 14px;
+    letter-spacing: 0;
+  }
+  .history-bar.open .history-actions {
+    top: 7px;
+    right: 8px;
+    height: 26px;
+    padding-inline: 7px;
+    background: oklch(0.19 0.015 260);
+  }
+  .history-bar.open .history-actions button {
+    height: 26px;
+    color: var(--game-red);
+  }
+  .history-bar.open .history-list {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    align-content: start;
+    gap: 6px 8px;
+    height: calc(100% - 33px);
+    margin-top: 29px;
+    padding-right: 0;
+    overflow: hidden;
+    white-space: normal;
+  }
+  .history-bar.open .history-list span {
+    min-width: 0;
+    padding: 5px 4px;
+    border-radius: 12px;
+    font-size: 11px;
+  }
 
   .flight-stage { border-radius: 16px; }
   .partners-logo { width: min(270px, 58%); }
