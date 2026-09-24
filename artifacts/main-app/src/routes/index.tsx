@@ -39,7 +39,10 @@ export const Route = createFileRoute("/")({
 const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, avatar9, avatar10, avatar11, avatar12];
 const planeFrames = [planeFrameSmall, planeFrameMedium, planeFrameBig];
 const planeFrameNames = ["small", "medium", "big"] as const;
-const maxMultiplier = 40;
+// Keep the familiar low-range timing calibrated against 40x, while allowing
+// rare rounds to continue into the 100x–1000x range.
+const growthReferenceMultiplier = 40;
+const maxCrashMultiplier = 1000;
 const flightDurationMs = 45000;
 const curveProgressExponent = 1.18;
 const curveRiseExponent = 1.7;
@@ -74,15 +77,21 @@ function pickCrashMultiplier() {
     multiplier = 3 + Math.random() * 6.99;
   } else if (roll < 0.97) {
     multiplier = 10 + Math.random() * 9.99;
+  } else if (roll < 0.992) {
+    multiplier = 20 + Math.random() * 29.99;
+  } else if (roll < 0.998) {
+    multiplier = 50 + Math.random() * 49.99;
+  } else if (roll < 0.9998) {
+    multiplier = 100 + Math.random() * 399.99;
   } else {
-    multiplier = 20 + Math.random() * 20;
+    multiplier = 500 + Math.random() * 500;
   }
 
-  return Number(clamp(multiplier, 1.01, maxMultiplier).toFixed(2));
+  return Number(clamp(multiplier, 1.01, maxCrashMultiplier).toFixed(2));
 }
 
 function flightDurationForTarget(target: number) {
-  const progressToTarget = Math.log(target) / Math.log(maxMultiplier);
+  const progressToTarget = Math.log(target) / Math.log(growthReferenceMultiplier);
   return Math.max(4200, Math.round(flightDurationMs * progressToTarget));
 }
 

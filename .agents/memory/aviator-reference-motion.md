@@ -20,3 +20,9 @@ The upper/lower endpoint movement must use a fixed wall-clock duration per segme
 **Why:** The requested reference behavior keeps the aircraft's visual movement speed stable while the numeric multiplier can accelerate.
 
 **How to apply:** Keep multiplier progression separate from endpoint transition timing; use elapsed flight time for repeated up/down transitions and the 1.70x threshold for both moving dot tracks.
+
+The multiplier's low-range growth reference is separate from the crash ceiling: preserve the existing 40x-calibrated exponential timing while allowing rare crash targets up to 1000x.
+
+**Why:** Increasing the crash ceiling must not make the familiar 1x–4x timing suddenly faster, while long rounds still need to support 100x and 1000x outcomes.
+
+**How to apply:** Use the growth reference only to derive elapsed-time progression; use the higher ceiling only for crash selection and clamping. Keep aircraft endpoint motion on its fixed wall-clock loop.
