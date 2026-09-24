@@ -132,8 +132,55 @@ function endpointStateAt(
   };
 }
 
-function curveControlsAt(currentProgress: number, crashAt: number) {
-  const endpoint = endpointStateAt(currentProgress, crashAt);
+function mobileEndpointStateAt(progress: number, crashAt: number): EndpointState {
+  const safeProgress = clamp(progress, 0, 1);
+  const multiplier = Math.pow(crashAt, safeProgress);
+
+  if (multiplier <= upperTouchMultiplier) {
+    const riseProgress = clamp(
+      (multiplier - 1) / (upperTouchMultiplier - 1),
+      0,
+      1,
+    );
+    const horizontalProgress = Math.pow(riseProgress, curveProgressExponent);
+    const upwardProgress = Math.pow(horizontalProgress, curveRiseExponent);
+
+    return {
+      x: lerp(graphStartX, upperTarget.x, horizontalProgress),
+      y: lerp(graphBaselineY, upperTarget.y, upwardProgress),
+      multiplier,
+      tangentSlope: lerp(-0.18, upperTangentSlope, smoothStep(riseProgress)),
+    };
+  }
+
+  const bounceStep = 0.5;
+  const bounceProgress = (multiplier - upperTouchMultiplier) / bounceStep;
+  const segmentIndex = Math.floor(bounceProgress);
+  const startsAtUpper = segmentIndex % 2 === 0;
+  const from = startsAtUpper ? upperTarget : lowerTarget;
+  const to = startsAtUpper ? lowerTarget : upperTarget;
+  const transition = smoothStep(bounceProgress - segmentIndex);
+
+  return {
+    x: lerp(from.x, to.x, transition),
+    y: lerp(from.y, to.y, transition),
+    multiplier,
+    tangentSlope: lerp(
+      from === upperTarget ? upperTangentSlope : lowerTangentSlope,
+      to === upperTarget ? upperTangentSlope : lowerTangentSlope,
+      transition,
+    ),
+  };
+}
+
+type EndpointResolver = (progress: number, crashAt: number) => EndpointState;
+
+function curveControlsAt(
+  currentProgress: number,
+  crashAt: number,
+  resolveEndpoint: EndpointResolver = endpointStateAt,
+) {
+  const endpoint = resolveEndpoint(currentProgress, crashAt);
   const endpointWidth = endpoint.x - graphStartX;
   const startControl = {
     x: graphStartX + endpointWidth * 0.28,
@@ -512,6 +559,15 @@ function AviatorGame() {
     history.map((value, index) => ({ id: `seed-${index}`, value }))
   ));
   const [historyAnimatingId, setHistoryAnimatingId] = useState<string | null>(null);
+  const [isMobileGraph, setIsMobileGraph] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 520px)");
+    const update = () => setIsMobileGraph(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
 
   useEffect(() => {
     const timer = window.setInterval(() => setProgress((value) => {
@@ -614,20 +670,24 @@ function AviatorGame() {
   // track arrives from below-left, then turns slightly up-right into the
   // plane's rear underside hook. The plane itself must not be shifted to fake
   // that join.
-  const curveEnd = useMemo(() => endpointStateAt(flight, crashAt), [flight, crashAt]);
+  const endpointResolver = isMobileGraph ? mobileEndpointStateAt : endpointStateAt;
+  const curveEnd = useMemo(
+    () => endpointResolver(flight, crashAt),
+    [endpointResolver, flight, crashAt],
+  );
   const lineEnd = useMemo(() => ({
     x: curveEnd.x + 0.75,
     y: curveEnd.y + 0.35,
   }), [curveEnd]);
   const curve = useMemo(() => {
-    const { startControl, endControl } = curveControlsAt(flight, crashAt);
+    const { startControl, endControl } = curveControlsAt(flight, crashAt, endpointResolver);
     return [
       `M ${graphStartX.toFixed(2)} ${graphBaselineY.toFixed(2)}`,
       `C ${startControl.x.toFixed(2)} ${startControl.y.toFixed(2)}`,
       `${endControl.x.toFixed(2)} ${endControl.y.toFixed(2)}`,
       `${curveEnd.x.toFixed(2)} ${curveEnd.y.toFixed(2)}`,
     ].join(" ");
-  }, [flight, crashAt, curveEnd]);
+  }, [endpointResolver, flight, crashAt, curveEnd]);
   const flightPath = useMemo(
     () => `${curve} L ${lineEnd.x.toFixed(2)} ${lineEnd.y.toFixed(2)}`,
     [curve, lineEnd],
