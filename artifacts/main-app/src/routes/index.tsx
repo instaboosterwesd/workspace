@@ -944,9 +944,10 @@ function AviatorGame() {
               <span className="cashout-multiplier">{cashoutNotice.multiplier.toFixed(2)}x</span>
             </div>
             <div className="cashout-win">
-              <span className="cashout-win-mark" aria-hidden="true">✦</span>
+              <span className="cashout-win-stars left" aria-hidden="true"><i>☆</i><i>☆</i></span>
               <strong>Win,INR</strong>
               <b>{money(cashoutNotice.amount)}</b>
+              <span className="cashout-win-stars right" aria-hidden="true"><i>☆</i><i>☆</i></span>
             </div>
             <button aria-label="Dismiss cash out notification" onClick={() => setCashoutNotice(null)}>×</button>
           </div>
