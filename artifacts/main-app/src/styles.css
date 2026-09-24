@@ -438,6 +438,20 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
     font-size: 11px;
   }
 
+  .play-area.history-expanded .flight-stage {
+    isolation: auto;
+    clip-path: none;
+  }
+  .play-area.history-expanded .flight-stage .plane-holder {
+    z-index: 11;
+    visibility: visible;
+    opacity: 1;
+  }
+  .play-area.history-expanded .bet-panels {
+    position: relative;
+    z-index: 11;
+  }
+
   .flight-stage { border-radius: 16px; }
   .partners-logo { width: min(270px, 58%); }
   .round-progress { width: min(220px, 60%); margin-top: 9px; }
