@@ -377,7 +377,8 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
   }
   .play-area.history-expanded {
     position: relative;
-    grid-template-rows: 70px clamp(280px, 37dvh, 330px) minmax(337px, auto);
+    min-height: calc(308px + 120px + 337px + 10px);
+    grid-template-rows: 308px 120px minmax(337px, auto);
   }
 
   .history-bar { padding: 7px 7px 0; }
@@ -397,11 +398,10 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
   .history-actions button { height: 24px; }
   .history-toggle.active { color: var(--game-red); }
   .history-bar.open {
-    position: absolute;
-    inset: 0 0 auto;
-    z-index: 10;
+    position: relative;
+    inset: auto;
     width: 100%;
-    height: min(308px, calc(100dvh - 110px));
+    height: 308px;
     padding: 8px 8px 9px;
     border-radius: 0 0 15px 15px;
     background: oklch(0.15 0.015 260);
