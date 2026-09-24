@@ -148,8 +148,8 @@ function mobileEndpointStateAt(progress: number, crashAt: number): EndpointState
     const upwardProgress = Math.pow(horizontalProgress, curveRiseExponent);
 
     return {
-      x: lerp(graphStartX, upperTarget.x, horizontalProgress),
-      y: lerp(graphBaselineY, upperTarget.y, upwardProgress),
+      x: lerp(graphStartX, mobileUpperTarget.x, horizontalProgress),
+      y: lerp(graphBaselineY, mobileUpperTarget.y, upwardProgress),
       multiplier,
       tangentSlope: lerp(-0.18, upperTangentSlope, smoothStep(riseProgress)),
     };
