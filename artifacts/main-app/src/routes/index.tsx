@@ -980,7 +980,10 @@ function AviatorGame() {
                       setRoundDetailsOpen((value) => !value);
                     }}
                   >
-                    Round ID: {round}{roundDetailsOpen ? <ChevronUp /> : <ChevronDown />}
+                    <span className="round-id-value">Round ID: {round}</span>
+                    <span className="round-id-caret" aria-hidden="true">
+                      {roundDetailsOpen ? <ChevronUp /> : <ChevronDown />}
+                    </span>
                   </button>
                   <span>Ping:167ms</span>
                 </div>
