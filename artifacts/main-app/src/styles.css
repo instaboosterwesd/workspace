@@ -72,7 +72,8 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .menu-button svg { width: 21px; }
 .menu-popover { position: absolute; right: 0; top: 30px; z-index: 10; width: min(320px, calc(100vw - 10px)); overflow: hidden; border: 1px solid oklch(0.23 0.01 260); border-radius: 0 0 7px 7px; background: oklch(0.13 0.01 260); box-shadow: 0 16px 30px oklch(0 0 0 / .62); }
 .menu-profile { height: 62px; display: grid; grid-template-columns: 42px 1fr auto; align-items: center; gap: 10px; padding: 8px 11px; background: oklch(0.19 0.01 260); }
-.menu-profile img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px oklch(0.28 0.01 260); }
+.menu-avatar-button { width: 42px; height: 42px; padding: 1px; border-radius: 50%; background: transparent; }
+.menu-profile img { display: block; width: 40px; height: 40px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px oklch(0.28 0.01 260); }
 .menu-profile strong { color: var(--foreground); font-size: 14px; letter-spacing: .1px; }
 .change-avatar { min-width: 83px; height: 40px; display: flex; align-items: center; justify-content: center; gap: 5px; padding: 0 8px; border: 1px solid oklch(0.28 0.01 260); border-radius: 22px; background: oklch(0.16 0.01 260); color: var(--muted-foreground); font-size: 11px; line-height: 13px; text-align: left; }
 .change-avatar svg { width: 21px; height: 21px; }
@@ -87,6 +88,18 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .menu-switch.on b { transform: translateX(17px); background: var(--foreground); }
 .menu-divider { height: 20px; background: oklch(0.18 0.01 260); }
 .menu-link { height: 45px; gap: 10px; padding: 0 12px; border-top: 1px solid oklch(0.22 0.01 260); font-size: 14px; }
+.avatar-picker-backdrop { position: fixed; inset: 0; z-index: 30; display: flex; align-items: flex-start; justify-content: center; padding: 42px 8px 10px; background: rgb(0 0 0 / .48); }
+.avatar-picker { width: min(460px, 100%); max-height: calc(100dvh - 52px); overflow: hidden; border: 1px solid oklch(0.27 0.01 260); border-radius: 8px; background: oklch(0.13 0.01 260); box-shadow: 0 18px 42px rgb(0 0 0 / .65); }
+.avatar-picker-head { height: 43px; display: flex; align-items: center; justify-content: space-between; padding: 0 10px 0 13px; background: oklch(0.19 0.01 260); }
+.avatar-picker-head h2 { margin: 0; color: var(--foreground); font-size: 16px; font-weight: 500; letter-spacing: .2px; }
+.avatar-picker-head button { width: 27px; height: 27px; display: grid; place-items: center; padding: 0; border-radius: 50%; background: transparent; color: var(--muted-foreground); }
+.avatar-picker-head button:hover { background: oklch(0.27 0.01 260); color: var(--foreground); }
+.avatar-picker-head button svg { width: 18px; height: 18px; }
+.avatar-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; max-height: calc(100dvh - 105px); overflow-y: auto; padding: 10px; scrollbar-width: thin; scrollbar-color: oklch(0.3 0.01 260) transparent; }
+.avatar-option { aspect-ratio: 1; min-width: 0; padding: 3px; border: 2px solid oklch(0.28 0.01 260); border-radius: 50%; background: oklch(0.18 0.01 260); transition: border-color .14s ease, transform .14s ease, box-shadow .14s ease; }
+.avatar-option:hover { border-color: oklch(0.58 0.01 260); transform: scale(1.04); }
+.avatar-option.selected { border-color: var(--game-red); box-shadow: 0 0 0 2px oklch(0.58 0.24 20 / .22); }
+.avatar-option img { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 .cashout-notice { position: absolute; top: 35px; left: 50%; z-index: 12; display: flex; align-items: center; gap: 3px; width: min(312px, calc(100vw - 24px)); min-height: 60px; padding: 5px 8px 5px 10px; border: 1px solid oklch(0.46 0.13 135); border-radius: 31px; background: oklch(0.23 0.12 135); box-shadow: 0 8px 22px oklch(0 0 0 / .44), inset 0 1px 0 oklch(0.82 0.14 135 / .12); transform: translateX(-50%); animation: cashout-pop .24s ease-out both; }
 .cashout-summary { flex: 1 1 128px; min-width: 106px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
 .cashout-copy { color: oklch(0.68 0.01 135); font-size: 11px; line-height: 12px; text-align: center; white-space: nowrap; }

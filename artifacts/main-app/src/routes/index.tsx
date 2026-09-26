@@ -18,6 +18,10 @@ import avatar9 from "../assets/aviator/avatar-9.png.asset.json";
 import avatar10 from "../assets/aviator/avatar-10.png.asset.json";
 import avatar11 from "../assets/aviator/avatar-11.png.asset.json";
 import avatar12 from "../assets/aviator/avatar-12.png.asset.json";
+import avatar13 from "../assets/aviator/avatar-13.png.asset.json";
+import avatar14 from "../assets/aviator/avatar-14.png.asset.json";
+import avatar15 from "../assets/aviator/avatar-15.png.asset.json";
+import avatar17 from "../assets/aviator/avatar-17.png.asset.json";
 import planeFrameSmall from "../assets/aviator/plane-frame-1.svg";
 import planeFrameMedium from "../assets/aviator/plane-frame-2.svg";
 import planeFrameBig from "../assets/aviator/plane-frame-3.svg";
@@ -36,7 +40,10 @@ export const Route = createFileRoute("/")({
   component: AviatorGame,
 });
 
-const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, avatar9, avatar10, avatar11, avatar12];
+const avatars = [
+  avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8,
+  avatar9, avatar10, avatar11, avatar12, avatar13, avatar14, avatar15, avatar17,
+];
 const planeFrames = [planeFrameSmall, planeFrameMedium, planeFrameBig];
 const planeFrameNames = ["small", "medium", "big"] as const;
 // Keep the familiar low-range timing calibrated against 40x, while allowing
@@ -423,6 +430,49 @@ function PlaneAnimation({ animationOn, label }: { animationOn: boolean; label?: 
   );
 }
 
+function AvatarPicker({
+  selectedIndex,
+  onSelect,
+  onClose,
+}: {
+  selectedIndex: number;
+  onSelect: (index: number) => void;
+  onClose: () => void;
+}) {
+  return (
+    <div className="avatar-picker-backdrop" role="presentation" onClick={onClose}>
+      <section
+        className="avatar-picker"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="avatar-picker-title"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="avatar-picker-head">
+          <h2 id="avatar-picker-title">CHOOSE GAME AVATAR</h2>
+          <button aria-label="Close avatar picker" onClick={onClose}><X /></button>
+        </div>
+        <div className="avatar-grid">
+          {avatars.map((avatar, index) => (
+            <button
+              key={avatar.url}
+              className={selectedIndex === index ? "avatar-option selected" : "avatar-option"}
+              aria-label={`Choose avatar ${index + 1}`}
+              aria-pressed={selectedIndex === index}
+              onClick={() => {
+                onSelect(index);
+                onClose();
+              }}
+            >
+              <img src={avatar.url} alt="" />
+            </button>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function BetPanel({
   initial,
   phase,
@@ -732,6 +782,7 @@ function AviatorGame() {
   const [musicOn, setMusicOn] = useState(false);
   const [animationOn, setAnimationOn] = useState(true);
   const [profileAvatarIndex, setProfileAvatarIndex] = useState(0);
+  const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
   const [cashoutNotice, setCashoutNotice] = useState<CashoutNotice | null>(null);
   const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>(() => (
     history.map((value, index) => ({ id: `seed-${index}`, value }))
@@ -914,9 +965,15 @@ function AviatorGame() {
         {menuOpen && (
           <div className="menu-popover" role="dialog" aria-label="Game menu" onClick={(event) => event.stopPropagation()}>
             <div className="menu-profile">
-              <img src={avatars[profileAvatarIndex]?.url ?? avatar1.url} alt="" />
+              <button
+                className="menu-avatar-button"
+                aria-label="Choose game avatar"
+                onClick={() => setAvatarPickerOpen(true)}
+              >
+                <img src={avatars[profileAvatarIndex]?.url ?? avatar1.url} alt="" />
+              </button>
               <strong>11020000102087</strong>
-              <button className="change-avatar" onClick={() => setProfileAvatarIndex((index) => (index + 1) % avatars.length)}><UserRound /><span>Change<br />Avatar</span></button>
+              <button className="change-avatar" onClick={() => setAvatarPickerOpen(true)}><UserRound /><span>Change<br />Avatar</span></button>
             </div>
             <div className="menu-settings">
               <button className="menu-setting" onClick={() => setSoundOn((value) => !value)}>
@@ -936,6 +993,16 @@ function AviatorGame() {
               <button className="menu-link" onClick={() => setMenuOpen(false)}><Languages /><span>Language</span></button>
             </div>
           </div>
+        )}
+        {avatarPickerOpen && (
+          <AvatarPicker
+            selectedIndex={profileAvatarIndex}
+            onSelect={(index) => {
+              setProfileAvatarIndex(index);
+              setMenuOpen(false);
+            }}
+            onClose={() => setAvatarPickerOpen(false)}
+          />
         )}
         {cashoutNotice && (
           <div className={`cashout-notice ${multiplierTone(cashoutNotice.multiplier)}`} role="status" aria-live="polite">
